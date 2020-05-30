@@ -104,7 +104,7 @@ class gui(QDialog):
 	    self.currentSpeed = 3
             self.ackermann_cmd_msg.drive.speed = self.currentSpeed
             self.setSpeedLevel('HIGH')
-	self.pub.publish(self.ackermann_cmd_msg)
+	#self.pub.publish(self.ackermann_cmd_msg)
 
     def setSpeedLevel(self, value):
         self.speeddisplay.setText(str(value))
