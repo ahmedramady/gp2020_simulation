@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="model" default="$(find car_description)/urdf/car.urdf"/>
+  <param name="robot_description" command="cat $(arg model)"/>
+  <arg name="rvizconfig" default="$(find gp2020_simulation)/rviz/gp2020_simulation.rviz" />
+  <!--arg name="rvizconfig" default="$(find car_demo)/rviz/demo.rviz" /-->
+<!--
+  <param name="robot_description" command="$(arg model)"/>
+-->
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="verbose" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="world_name" value="$(find gp2020_simulation)/worlds/track.world"/>
+  </include>
+
+<!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find gp2020_simulation)/car_control/config/car_control.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_manager" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen" ns="/car" args="left_rear_wheel_velocity_controller right_rear_wheel_velocity_controller
+                                            left_front_wheel_velocity_controller right_front_wheel_velocity_controller
+                                            left_steering_hinge_position_controller right_steering_hinge_position_controller
+                                            joint_state_controller"/>
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+    <remap from="/joint_states" to="/car/joint_states" />
+  </node>
+
+  <!--node pkg="tf2_ros" type="static_transform_publisher" name="very_inaccurate_odom" args="0 0 0 0 0 0 odom base_link"/-->
+
+  <!-- servo node -->
+  <node pkg="gp2020_simulation" type="servo_commands.py" name="servo_commands" output="screen">
+  </node>
+
+
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -y -14.25 -z 0.05 -model car"/>
+  <node pkg="nodelet" type="nodelet" name="laserscan_nodelet_manager" args="manager"/>
+  <node pkg="nodelet" type="nodelet" name="depthimage_to_laserscan"
+        args="load depthimage_to_laserscan/DepthImageToLaserScanNodelet laserscan_nodelet_manager">
+    <param name="scan_height" value="10"/>
+    <!-- publishing my output frame id with the robot tf prefix, this would end any errors in rviz saying no transform exist from /camera_depth_frame to /camera_depth_frame  -->
+<!--
+    <param name="output_frame_id" value="camera_link/camera_depth_frame"/>
+-->
+    <param name="range_min" value="0.45"/>
+    <param name="range_max" value="5"/>
+    <remap from="image" to="camera/depth/image_raw"/>
+    <remap from="scan" to="scan"/>
+  </node>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+<!--
+  <include file="$(find hector_mapping)/launch/mapping_default.launch">
+  </include>
+-->
+
+  <node pkg="gp2020_simulation" type="gui.py" name="gui" output="screen"/>
+  <node pkg="gp2020_simulation" type="safe_breaking.py" name="safe_breaking" output="screen"/>
+
+</launch>
