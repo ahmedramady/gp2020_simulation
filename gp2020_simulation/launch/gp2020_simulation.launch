@@ -59,6 +59,6 @@
 -->
 
   <node pkg="gp2020_simulation" type="gui.py" name="gui" output="screen"/>
-  <node pkg="gp2020_simulation" type="safe_breaking.py" name="safe_breaking" output="screen"/>
+  <node pkg="gp2020_simulation" type="safe_braking.py" name="safe_breaking" output="screen"/>
 
 </launch>

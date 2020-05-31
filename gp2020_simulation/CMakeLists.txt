@@ -214,7 +214,7 @@ catkin_install_python(PROGRAMS car_control/servo_commands.py
 catkin_install_python(PROGRAMS gui/gui.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-catkin_install_python(PROGRAMS motion_planning/safe_breaking.py
+catkin_install_python(PROGRAMS motion_planning/safe_braking.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 
