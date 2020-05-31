@@ -96,12 +96,12 @@ class gui(QDialog):
 	    self.ackermann_cmd_msg.drive.steering_angle = 0
             self.setSpeedLevel('LOW')
         elif(speed == 180):
-	    self.currentSpeed = 2
+	    self.currentSpeed = 3
             self.ackermann_cmd_msg.drive.speed = self.currentSpeed
 	    self.ackermann_cmd_msg.drive.steering_angle = 0
             self.setSpeedLevel('MID')
         elif(speed == 230):
-	    self.currentSpeed = 3
+	    self.currentSpeed = 5
             self.ackermann_cmd_msg.drive.speed = self.currentSpeed
             self.setSpeedLevel('HIGH')
 	#self.pub.publish(self.ackermann_cmd_msg)
