@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <!-- Console launch prefix -->
+  <arg name="launch_prefix" default=""/>
+  <arg name="image" default="/camera/rgb/image_raw" />
+
+  <node pkg="lane_detection" type="lane_detection.py" name="lane_detection" output="screen">
+    <remap from="/camera/rgb/image_raw"  to="$(arg image)" />
+  </node>
+
+</launch>

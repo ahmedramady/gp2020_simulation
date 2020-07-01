@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <!-- Console launch prefix -->
+  <arg name="launch_prefix" default=""/>
+  <arg name="image" default="/camera/depth/image_raw" />
+	
+
+  <node pkg="object_detection" type="object_detection.py" name="object_detection" output="screen">
+    <remap from="/camera/depth/image_raw"  to="$(arg image)" />
+    
+  </node>
+
+</launch>
