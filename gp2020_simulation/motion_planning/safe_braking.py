@@ -11,7 +11,7 @@ from PyQt5 import *
 from ackermann_msgs.msg import AckermannDriveStamped
 from std_msgs.msg import Float64
 
-sys.path.insert(1, '/home/ramady/catkin_ws/src/gp2020_simulation/gp2020_simulation/gui')
+sys.path.insert(1, '/home/arwa/catkin_ws/src/gp2020_simulation/gp2020_simulation/gui')
 from gui import gui
 
 

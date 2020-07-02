@@ -57,6 +57,7 @@
   <node pkg="gp2020_simulation" type="safe_braking.py" name="safe_breaking" output="screen"/>
 
 
+
   <!--include file="$(find hector_mapping)/launch/mapping_default.launch"/-->
 
 </launch>
