@@ -35,6 +35,7 @@ class gui(QDialog):
         self.depthDangerSignal.connect(self.setSafetyStatus_Danger)
         self.depthWarningSignal.connect(self.setSafetyStatus_Warning)
         self.depthSafeSignal.connect(self.setSafetyStatus_Safe)
+	self.current_status = "safe"
 	#buttons
         self.forwardbutton.clicked.connect(self.forward)
         self.backwardbutton.clicked.connect(self.backward)
@@ -149,15 +150,7 @@ class gui(QDialog):
             self.depthWarningSignal.emit(msg.data)
         elif(msg.data >=1):
             self.depthSafeSignal.emit(msg.data)
-        '''
-	if(msg.ranges[360] < 0.7 and msg.ranges[360] > 0.45):
-            self.depthDangerSignal.emit(msg.ranges[360])
-	    self.stopbutton.click()
-        elif(msg.ranges[360] < 1):
-            self.depthWarningSignal.emit(msg.ranges[360])
-        elif(msg.ranges[360] >=1):
-            self.depthSafeSignal.emit(msg.ranges[360])
-            '''
+
     
 
     def setSafetyStatus_Danger(self, value):
@@ -166,6 +159,7 @@ class gui(QDialog):
             font: 75 16pt "Verdana";\nbackground-color: rgb(180, 25, 0);\n
             }""")
         self.safetystatus.setText(text)
+	self.current_status= "danger"
     
     def setSafetyStatus_Safe(self, value):
 	if value == 100000: 
@@ -176,6 +170,7 @@ class gui(QDialog):
             font: 75 16pt "Verdana";\nbackground-color: rgb(60, 120, 0);\n
             }""")    
         self.safetystatus.setText(text)
+	self.current_status= "safe"
     
     def setSafetyStatus_Warning(self, value):
         text=str("Alert! distance to nearest obstacle is {} m".format(round(value,2)))
@@ -183,9 +178,12 @@ class gui(QDialog):
             font: 75 16pt "Verdana";\nbackground-color: rgb(100, 50, 0);\n
             }""")
         self.safetystatus.setText(text)
+	self.current_status= "warning"
+
 #self.currentLane = 2 right , 1 left 
 #direction right 2 , 1 left 
 #self.currentSpeed = 1
+
     def calculateAngle(self,slope,direction,lane,speed):
 	if direction != lane:
 		return abs(slope) * 0.2 * speed
@@ -193,14 +191,14 @@ class gui(QDialog):
 		return abs(slope) * 0.25 * speed
 	
     def lane_callback(self,lane_msg):
-	self.lane_pub.publish(self.currentLane)
 
+	self.checkStatus()
+	self.lane_pub.publish(self.currentLane)
 	if self.currentAction == 1:
 		print("STOP")
 		self.stopbutton.click()
 	elif self.currentAction == 0:
 		print("slope ",self.current_slope)
-		#self.maxSteer = self.calculateAngle(self.current_slope)
 		print("angle ",self.maxSteer)
 		if((lane_msg.data == 101)):
 		    print("moving forward")
@@ -218,32 +216,15 @@ class gui(QDialog):
 	       
 		else:
 		    print("no lane")
-		    if self.current_slope <0:
-			if self.current_slope > -1:
-				print("no lane >>>>to the left ")
-				self.forwardbutton.click()
-		    		self.maxSteer = self.calculateAngle(self.current_slope,1,self.currentLane,self.currentSpeed)
-			else:
-				print("no lane >>>>adjast to the right")
-		
-				self.rightbutton.click()
-			    	self.forwardbutton.click()
-				self.maxSteer = self.calculateAngle(self.current_slope,2,self.currentLane,self.currentSpeed)
-		    elif self.current_slope >0:
-			if self.current_slope <1:
-				print("no lane >>>>adjast to the right")
-		
-				self.rightbutton.click()
-		    		self.forwardbutton.click()
-		   	        self.maxSteer = self.calculateAngle(self.current_slope,1,self.currentLane,self.currentSpeed)
-			else :
-				print("no lane >>>>to the left ")
-				
-				self.leftbutton.click()
-		
-				self.forwardbutton.click()
-				self.maxSteer = self.calculateAngle(self.current_slope,1,self.currentLane,self.currentSpeed)
-		
+		    
+
+    def checkStatus(self):
+	if self.current_status =="danger":
+		self.currentAction = 1
+	elif self.current_status =="warning":
+		self.speedslider.setValue(100)
+	else:
+		self.currentAction = 0
 
     def object_action_callback(self,sub_object_action):
 	self.currentAction = sub_object_action.data
