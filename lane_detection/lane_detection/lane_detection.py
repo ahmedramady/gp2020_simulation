@@ -119,17 +119,23 @@ class lane_detection():
 					m = (float(y2) - y1) / (x2 - x1)
 					if current_lane == 1:
 						right.append([x1,y1,x2,y2,m])
+						
 						print("center slope right: ", m)
 						if abs(m) > 2:
-							left = []		
-						self.pub_slope.publish(m)
+							left = []
+							m = m*0.2
+						self.pub_slope.publish(m)		
+						
 					else:
 						left.append([x1,y1,x2,y2,m])
-						print("center slope left: ", m)
+						self.pub_slope.publish(m)
+						
 						if abs(m) > 2:
 							right = []
+							m=m*0.2
+						print("center slope left: ", m)
 
-						self.pub_slope.publish(m)
+						
 
 		
 		left = left if len(left)!=0 else None

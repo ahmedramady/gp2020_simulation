@@ -3,7 +3,7 @@ import sys
 import rospy
 
 from sensor_msgs.msg import LaserScan
-from std_msgs.msg import Char, Int32
+from std_msgs.msg import Char, Int32, Float64
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5 import QtCore
@@ -13,6 +13,7 @@ from PyQt5.uic import loadUi
 #from PyQt5 import *f
 from ackermann_msgs.msg import AckermannDriveStamped
 from std_msgs.msg import Float64
+import os
 
 class gui(QDialog):
     depthDangerSignal = pyqtSignal(float)
@@ -20,7 +21,9 @@ class gui(QDialog):
     depthSafeSignal = pyqtSignal(float)
     def __init__(self):
         super(gui, self).__init__()
-        loadUi('/home/arwa/catkin_ws/src/gp2020_simulation/gp2020_simulation/gui/gui.ui', self)
+	self.dirname = os.path.dirname(__file__)
+	self.filename = os.path.join(self.dirname, './gui.ui')
+        loadUi(self.filename, self)
 	#publishers
 	self.lane_pub = rospy.Publisher('/lane_controller/current_lane', Int32, queue_size=2) 
         self.pub = rospy.Publisher('/car/ackermann_cmd_mux/output', AckermannDriveStamped, queue_size=1)
@@ -39,7 +42,7 @@ class gui(QDialog):
         self.leftbutton.clicked.connect(self.left)
         self.stopbutton.clicked.connect(self.stop)
 	#speed controller
-	  self.currentDirection = 4
+	self.currentDirection = 4
         self.currentSpeed = 1
         self.speedslider.valueChanged.connect(self.adjustLevel)
         self.speeddisplay.setText('LOW')
@@ -53,7 +56,8 @@ class gui(QDialog):
 	self.currentAction = 0
 	self.current_slope = 0
 	#subscribers
-        self.sub = rospy.Subscriber('/scan', LaserScan, self.laserData)
+        self.distance_sub = rospy.Subscriber('/object_detection/center_distance', Float64, self.laserData)
+        #self.sub = rospy.Subscriber('/scan', LaserScan, self.laserData)
         self.sub_object_action = rospy.Subscriber('/object_detection_action', Int32, self.object_action_callback)
 	self.lane_sub = rospy.Subscriber('/lane_controller', Int32, self.lane_callback)
 	self.lane_slope = rospy.Subscriber('/lane_detection_slope', Float64, self.lane_slope_callback)
@@ -137,6 +141,15 @@ class gui(QDialog):
         self.speeddisplay.setText(str(value))
     
     def laserData(self, msg):
+	
+        if(msg.data < 0.7 and msg.data > 0.45):
+            self.depthDangerSignal.emit(msg.data)
+	    self.stopbutton.click()
+        elif(msg.data < 1):
+            self.depthWarningSignal.emit(msg.data)
+        elif(msg.data >=1):
+            self.depthSafeSignal.emit(msg.data)
+        '''
 	if(msg.ranges[360] < 0.7 and msg.ranges[360] > 0.45):
             self.depthDangerSignal.emit(msg.ranges[360])
 	    self.stopbutton.click()
@@ -144,6 +157,7 @@ class gui(QDialog):
             self.depthWarningSignal.emit(msg.ranges[360])
         elif(msg.ranges[360] >=1):
             self.depthSafeSignal.emit(msg.ranges[360])
+            '''
     
 
     def setSafetyStatus_Danger(self, value):
@@ -154,7 +168,10 @@ class gui(QDialog):
         self.safetystatus.setText(text)
     
     def setSafetyStatus_Safe(self, value):
-        text = str("Safe, distance to nearest obstacle is {} m".format(round(value,2)))
+	if value == 100000: 
+		text = "No object detected" 
+	else: 
+        	text = str("Safe, distance to nearest obstacle is {} m".format(round(value,2)))
         self.safetystatus.setStyleSheet(""".QLineEdit {
             font: 75 16pt "Verdana";\nbackground-color: rgb(60, 120, 0);\n
             }""")    
@@ -197,7 +214,6 @@ class gui(QDialog):
 		    self.maxSteer = self.calculateAngle(self.current_slope,1,self.currentLane,self.currentSpeed)
 		    self.forwardbutton.click()
 		    self.leftbutton.click()
-		    #self.forwardbutton.click()
 		    print("turning left")
 	       
 		else:
@@ -205,9 +221,6 @@ class gui(QDialog):
 		    if self.current_slope <0:
 			if self.current_slope > -1:
 				print("no lane >>>>to the left ")
-				#self.maxSteer = 0.7
-				self.leftbutton.click()
-				#self.rightbutton.click()
 				self.forwardbutton.click()
 		    		self.maxSteer = self.calculateAngle(self.current_slope,1,self.currentLane,self.currentSpeed)
 			else:

@@ -12,14 +12,16 @@ class object_detection():
 		# Params
 	
 		self.bridge = CvBridge()
-		self.current_depth_array = np.array(np.zeros((480,640)), dtype=np.float32)
+		
 		self.number_of_objects = 0
 		self.image_width = 640
 		self.image_height = 480
+		self.current_depth_array = np.array(np.zeros((self.image_height,self.image_width)), dtype=np.float32)
 		self.current_center =(0,0)
 
 		# Publishers
-		self.pub = rospy.Publisher('object_detection_action', Int32, queue_size=1) #ros-lane-detection	
+		self.pub = rospy.Publisher('object_detection_action', Int32, queue_size=1)
+		self.distance_pub = rospy.Publisher('/object_detection/center_distance', Float64, queue_size=1) #ros-lane-detection	
 		# Subscribers
 		#self.image_sub = rospy.Subscriber('/camera/rgb/image_raw', Image, self.image_callback)
 		self.depth_sub = rospy.Subscriber('/camera/depth/image_raw', Image, self.depth_callback)
@@ -78,10 +80,10 @@ class object_detection():
 					msg = 1
 					self.pub.publish(msg)
 					print("stop")
-				elif "s" in action
+				elif "s" in action:
 					msg = 1
 					self.pub.publish(msg)
-				elif "0" in action
+				elif "0" in action:
 					msg = 0
 					self.pub.publish(msg)
 				self.number_of_objects = self.number_of_objects + 1
@@ -107,6 +109,23 @@ class object_detection():
 					return self.get_distance(x+i,y+j)
 		return -1
 
+	def get_closest_distance(self, center_x,center_y):
+		
+		center_range = 150
+		closest_distance = self.get_distance(center_x,center_y)
+		if math.isnan(closest_distance):
+			closest_distance = 100000
+
+		for x in range(center_x-center_range,center_x+center_range):
+				new_distance = self.get_distance(x,center_y)
+				if math.isnan(new_distance):
+					continue
+				else:
+					if new_distance < closest_distance:
+						closest_distance = new_distance
+
+		return closest_distance
+	
 	
 	def image_callback(self, rgb_img):
 		try:
@@ -128,10 +147,13 @@ class object_detection():
 
 		depth_array = np.array(depth_image, dtype=np.float32)
 		self.current_depth_array = depth_array
-		'''
+		
 		center_x = int(depth_data.width/2)
 		center_y = int(depth_data.height/2)
-		
+		closest_distance = self.get_closest_distance(center_x, center_y)
+		print(closest_distance)
+		self.distance_pub.publish(round(closest_distance,2))
+		'''
 		flattened_array = depth_array.flatten() 
 		nan_array = np.isnan(flattened_array)
 		not_nan_array = ~ nan_array
