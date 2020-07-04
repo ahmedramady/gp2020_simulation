@@ -185,14 +185,18 @@ class gui(QDialog):
 #self.currentSpeed = 1
 
     def calculateAngle(self,slope,direction,lane,speed):
+	
 	if direction != lane:
-		return abs(slope) * 0.2 * speed
+		
+		#return abs(slope) * 0.2 * speed
+		return abs(slope) * 0.2 
 	else:
-		return abs(slope) * 0.25 * speed
+		#return abs(slope) * 0.25 * speed
+		return abs(slope) * 0.25 
 	
     def lane_callback(self,lane_msg):
-
 	self.checkStatus()
+	
 	self.lane_pub.publish(self.currentLane)
 	if self.currentAction == 1:
 		print("STOP")

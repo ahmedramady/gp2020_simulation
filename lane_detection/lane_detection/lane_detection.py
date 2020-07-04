@@ -26,6 +26,7 @@ class lane_detection():
 		self.pub_slope = rospy.Publisher('lane_detection_slope',Float64,queue_size=1)
 		self.sub_image = rospy.Subscriber("/camera/rgb/image_raw", Image, self.image_callback)
 		self.sub_image = rospy.Subscriber("/lane_controller/current_lane", Int32, self.set_current_lane)
+		self.prevLine = []
 
 	def set_current_lane(self, lane):
 		self.current_lane = lane.data
@@ -109,44 +110,78 @@ class lane_detection():
 			if m >= 0: 
 				right.append([x1,y1,x2,y2,m])
 				self.pub_slope.publish(m)
+				
 			else: 
 				left.append([x1,y1,x2,y2,m])
 				self.pub_slope.publish(m)
+				print "left slope: ", m
+				
+
+		average_slope_left, average_slope_right = self.get_slope_average(left,right)
 
 		if middle is not None:
+			
 			for line in middle:
 				for x1,y1,x2,y2 in line:
 					m = (float(y2) - y1) / (x2 - x1)
+					print "center slope :" , m
 					if current_lane == 1:
 						right.append([x1,y1,x2,y2,m])
 						
-						print("center slope right: ", m)
-						if abs(m) > 2:
+						if abs(m) > abs(average_slope_left) and abs(m) != float("inf"):
 							left = []
-							m = m*0.2
-						self.pub_slope.publish(m)		
-						
-					else:
-						left.append([x1,y1,x2,y2,m])
+							m =  (m + average_slope_left)/ 2
+					
 						self.pub_slope.publish(m)
 						
-						if abs(m) > 2:
-							right = []
-							m=m*0.2
-						print("center slope left: ", m)
-
 						
-
-		
+							
+					else:
+						left.append([x1,y1,x2,y2,m])
+						
+						if abs(m) > abs(average_slope_right) and abs(m) != float("inf"):
+							right = []
+							m =  (m + average_slope_left)/ 2
+					
+						self.pub_slope.publish(m)
+					
+						
+				
 		left = left if len(left)!=0 else None
 		right = right if len(right)!=0 else None
-			
-	
+		
 		return left, right
 
+	def get_slope_average (self, left, right):
+		average_slope_left = np.mean(left, axis = 0)
+
+		array_sum = np.sum(average_slope_left)
+		array_has_nan = np.isnan(array_sum)
+		
+		
+		if array_has_nan:
+			average_slope_left = 0
+		else:
+			average_slope_left = average_slope_left[4]	
+
+		average_slope_right = np.mean(right, axis = 0)
+
+		array_sum = np.sum(average_slope_right)
+		array_has_nan = np.isnan(array_sum)
+		
+
+		if array_has_nan:
+			average_slope_right = 0
+		else:
+			average_slope_right = average_slope_right[4]
+		return average_slope_left, average_slope_right
+
+
 	def draw_lines(self, img, lines, middle, color=[0, 0, 255], thickness=15):
+
 		left= None
 		right=None
+
 		if lines is not None:
 			left, right  = self.separate_lines(lines, middle)
 			for line in lines:
@@ -159,6 +194,7 @@ class lane_detection():
 		
 
 	def get_hough_lines(self, img, rho=1, theta=np.pi/180, threshold=20, min_line_len=20, max_line_gap=1000):
+
 		lines = cv2.HoughLinesP(img, rho, theta, threshold, np.array([]), 
 								minLineLength=min_line_len, maxLineGap=max_line_gap)
 		return lines
@@ -175,6 +211,7 @@ class lane_detection():
 
 	# Define a callback for the Image message
 	def image_callback(self, img_msg):
+
 		try:
 			cv_image = self.bridge.imgmsg_to_cv2(img_msg, "passthrough")
 		except CvBridgeError, e:
@@ -236,52 +273,6 @@ class lane_detection():
 		ros_image = self.bridge.cv2_to_imgmsg(hough_img, "bgr8")
 
 		self.pub_image.publish(ros_image)
-
-		'''
-		if self.current_lane == 1:
-			if center is not None and right is not None and left is not None:
-				rospy.loginfo("Turn Left to switch lane")
-				message = -110
-			elif right is not None and left is not None:
-				rospy.loginfo("Car is in the middle of the lane")
-				message = 101
-			elif left is not None and right is None:
-				rospy.loginfo("Turn Right")
-				message = 110
-
-			elif left is None and right is not None:
-				rospy.loginfo("Turn Left")
-				message = -110
-			elif left is None and right is None:
-				rospy.loginfo("No lane detected")
-				message = 111		
-			else:
-				rospy.loginfo("Error") 
-
-		else:
-			
-			if center is not None and right is not None and left is not None:
-				rospy.loginfo("Turn Right to switch lane")
-				message = 110
-			elif right is not None and left is not None:
-				rospy.loginfo("Car is in the middle of the lane")
-				message = 101
-			elif left is not None and right is None:
-				rospy.loginfo("Turn Right")
-				message = 110
-
-			elif left is None and right is not None:
-				rospy.loginfo("Turn Left")
-				message = -110
-			elif left is None and right is None:
-				rospy.loginfo("No lane detected")
-				message = 111		
-			else:
-				rospy.loginfo("Error") 
-
-
-		'''
-		
 
 
 # Initalize a subscriber to the "/camera/rgb/image_raw" topic with the function "image_callback" as a callback
