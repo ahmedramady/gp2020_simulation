@@ -188,17 +188,16 @@ class gui(QDialog):
 	
 	if direction != lane:
 		
-		#return abs(slope) * 0.2 * speed
 		return abs(slope) * 0.2 
 	else:
-		#return abs(slope) * 0.25 * speed
 		return abs(slope) * 0.25 
 	
     def lane_callback(self,lane_msg):
+
 	self.checkStatus()
 	
 	self.lane_pub.publish(self.currentLane)
-	if self.currentAction == 1:
+	if self.currentAction == 1 or self.currentAction == 11:
 		print("STOP")
 		self.stopbutton.click()
 	elif self.currentAction == 0:
@@ -224,9 +223,11 @@ class gui(QDialog):
 
     def checkStatus(self):
 	if self.current_status =="danger":
-		self.currentAction = 1
+		self.currentAction = 11
 	elif self.current_status =="warning":
 		self.speedslider.setValue(100)
+	elif self.currentAction == 1 :
+		self.currentAction = 1 
 	else:
 		self.currentAction = 0
 
