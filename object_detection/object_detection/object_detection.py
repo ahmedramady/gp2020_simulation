@@ -111,13 +111,14 @@ class object_detection():
 
 	def get_closest_distance(self, center_x,center_y):
 		
-		center_range = 150
+		center_range_x = 150
+		center_range_y = 50
 		closest_distance = self.get_distance(center_x,center_y)
 		if math.isnan(closest_distance):
 			closest_distance = 100000
 
-		for x in range(center_x-center_range,center_x+center_range):
-			for y in range(center_y-center_range,center_y+center_range):
+		for x in range(center_x-center_range_x,center_x+center_range_x):
+			for y in range(center_y-center_range_y,center_y+center_range_y):
 				new_distance = self.get_distance(x,y)
 				if math.isnan(new_distance):
 					continue

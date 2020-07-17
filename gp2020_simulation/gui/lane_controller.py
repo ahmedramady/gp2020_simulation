@@ -43,16 +43,16 @@ class LaneController ():
         else:
             self.mainController.backwardbutton.click()
             self.mainController.rightbutton.click()
-        time.sleep(4)
+        time.sleep(4.5)
 
         #last part of S
         self.mainController.stopbutton.click()
         self.mainController.forwardbutton.click()
-        time.sleep(2)
+        time.sleep(1.5)
 
         if self.current_lane == 1:
             self.mainController.backwardbutton.click()
-            self.mainControllerrightbutton.click()
+            self.mainController.rightbutton.click()
         else:
             self.mainController.backwardbutton.click()
             self.mainController.leftbutton.click()
@@ -78,8 +78,9 @@ class LaneController ():
 	    self.mainController.lanedisplay.setText('Left')
         else:
 	    self.mainController.lanedisplay.setText('Right')
-    	    self.current_lane = currentValue + 1
-	    self.mainController.laneslider.setValue(currentValue)
+        self.current_lane = currentValue + 1
+        self.mainController.laneslider.setValue(currentValue)
+	
 
 
     
@@ -88,6 +89,7 @@ class LaneController ():
     #self.currentSpeed = 1
 
     def lane_callback(self,lane_msg):
+	    print self.current_lane
 	    self.mainController.checkStatus()
             self.lane_pub.publish(self.current_lane)
        
