@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 import sys
 import rospy
-
-from sensor_msgs.msg import LaserScan
+import time
 from std_msgs.msg import Char, Int32, Float64
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -14,6 +13,7 @@ from PyQt5.uic import loadUi
 from ackermann_msgs.msg import AckermannDriveStamped
 from std_msgs.msg import Float64
 import os
+from lane_controller import LaneController
 
 class gui(QDialog):
     depthDangerSignal = pyqtSignal(float)
@@ -24,10 +24,12 @@ class gui(QDialog):
 	self.dirname = os.path.dirname(__file__)
 	self.filename = os.path.join(self.dirname, './gui.ui')
         loadUi(self.filename, self)
+	rospy.init_node('gui', anonymous=False)
 	#publishers
-	self.lane_pub = rospy.Publisher('/lane_controller/current_lane', Int32, queue_size=2) 
         self.pub = rospy.Publisher('/car/ackermann_cmd_mux/output', AckermannDriveStamped, queue_size=1)
-        rospy.init_node('gui', anonymous=False)
+	#subscribers
+	self.sub_object_action = rospy.Subscriber('/object_detection_action', Int32, self.object_action_callback)
+	self.distance_sub = rospy.Subscriber('/object_detection/center_distance', Float64, self.depthData)
 	###
 	self.maxSteer = 0.5
         self.ackermann_cmd_msg = AckermannDriveStamped()
@@ -35,6 +37,7 @@ class gui(QDialog):
         self.depthDangerSignal.connect(self.setSafetyStatus_Danger)
         self.depthWarningSignal.connect(self.setSafetyStatus_Warning)
         self.depthSafeSignal.connect(self.setSafetyStatus_Safe)
+	self.current_action = 0
 	self.current_status = "safe"
 	#buttons
         self.forwardbutton.clicked.connect(self.forward)
@@ -48,20 +51,7 @@ class gui(QDialog):
         self.speedslider.valueChanged.connect(self.adjustLevel)
         self.speeddisplay.setText('LOW')
         self.speedslider.setValue(130)
-	#lane controller 
-        self.laneslider.valueChanged.connect(self.switchLane)
-        self.lanedisplay.setText('Right')
-        self.laneslider.setValue(1)
-        self.currentLane = 2
-        #self.pub.publish(130)
-	self.currentAction = 0
-	self.current_slope = 0
-	#subscribers
-        self.distance_sub = rospy.Subscriber('/object_detection/center_distance', Float64, self.laserData)
-        #self.sub = rospy.Subscriber('/scan', LaserScan, self.laserData)
-        self.sub_object_action = rospy.Subscriber('/object_detection_action', Int32, self.object_action_callback)
-	self.lane_sub = rospy.Subscriber('/lane_controller', Int32, self.lane_callback)
-	self.lane_slope = rospy.Subscriber('/lane_detection_slope', Float64, self.lane_slope_callback)
+	
 
     def keyPressEvent(self, event):
         if(event.key()==QtCore.Qt.Key_W):
@@ -74,7 +64,6 @@ class gui(QDialog):
             self.leftbutton.click()
         elif(event.key()==QtCore.Qt.Key_X):
             self.stopbutton.click()
-
     
     def adjustLevel(self):
         currentValue = self.speedslider.value()
@@ -87,16 +76,6 @@ class gui(QDialog):
         self.speedslider.setValue(currentValue)
         self.speedLevel(currentValue)
 
-    def switchLane(self):
-        currentValue = self.laneslider.value()
-	print(currentValue)
-        if(currentValue==0):
-	    self.lanedisplay.setText('Left')
-        else:
-	    self.lanedisplay.setText('Right')
-    	self.currentLane = currentValue + 1
-	self.laneslider.setValue(currentValue)
-        
     def forward(self):
         self.ackermann_cmd_msg.drive.speed = self.currentSpeed
         self.ackermann_cmd_msg.drive.steering_angle = 0
@@ -141,8 +120,7 @@ class gui(QDialog):
     def setSpeedLevel(self, value):
         self.speeddisplay.setText(str(value))
     
-    def laserData(self, msg):
-	
+    def depthData(self, msg):
         if(msg.data < 0.7 and msg.data > 0.45):
             self.depthDangerSignal.emit(msg.data)
 	    self.stopbutton.click()
@@ -150,8 +128,6 @@ class gui(QDialog):
             self.depthWarningSignal.emit(msg.data)
         elif(msg.data >=1):
             self.depthSafeSignal.emit(msg.data)
-
-    
 
     def setSafetyStatus_Danger(self, value):
         text = str("WARNING!, distance to nearest obstacle is {} m".format(round(value,2)))
@@ -172,6 +148,7 @@ class gui(QDialog):
         self.safetystatus.setText(text)
 	self.current_status= "safe"
     
+    
     def setSafetyStatus_Warning(self, value):
         text=str("Alert! distance to nearest obstacle is {} m".format(round(value,2)))
         self.safetystatus.setStyleSheet(""".QLineEdit{
@@ -180,67 +157,26 @@ class gui(QDialog):
         self.safetystatus.setText(text)
 	self.current_status= "warning"
 
-#self.currentLane = 2 right , 1 left 
-#direction right 2 , 1 left 
-#self.currentSpeed = 1
-
-    def calculateAngle(self,slope,direction,lane,speed):
-	
-	if direction != lane:
-		
-		return abs(slope) * 0.2 
-	else:
-		return abs(slope) * 0.25 
-	
-    def lane_callback(self,lane_msg):
-
-	self.checkStatus()
-	
-	self.lane_pub.publish(self.currentLane)
-	if self.currentAction == 1 or self.currentAction == 11:
-		print("STOP")
-		self.stopbutton.click()
-	elif self.currentAction == 0:
-		print("slope ",self.current_slope)
-		print("angle ",self.maxSteer)
-		if((lane_msg.data == 101)):
-		    print("moving forward")
-		    self.forwardbutton.click()
-		elif ((lane_msg.data == 110)):
-		    self.maxSteer = self.calculateAngle(self.current_slope,2,self.currentLane,self.currentSpeed)
-		    self.forwardbutton.click() 
-		    self.rightbutton.click()
-		    print("turning right")
-		elif ((lane_msg.data==-110)):
-		    self.maxSteer = self.calculateAngle(self.current_slope,1,self.currentLane,self.currentSpeed)
-		    self.forwardbutton.click()
-		    self.leftbutton.click()
-		    print("turning left")
-	       
-		else:
-		    print("no lane")
-		    
-
     def checkStatus(self):
-	if self.current_status =="danger":
-		self.currentAction = 11
-	elif self.current_status =="warning":
-		self.speedslider.setValue(100)
-	elif self.currentAction == 1 :
-		self.currentAction = 1 
-	else:
-		self.currentAction = 0
+        if self.current_status =="danger":
+            self.current_action = 11
+        elif self.current_status =="stop":
+            self.current_action = 11
+        elif self.current_status =="warning":
+            self.speedslider.setValue(100)
+        elif self.current_action == 1 :
+            self.current_action = 1 
+        else:
+            self.current_action = 0
 
     def object_action_callback(self,sub_object_action):
-	self.currentAction = sub_object_action.data
+	self.current_action = sub_object_action.data
 	
-    def lane_slope_callback(self, slope):
-        self.current_slope = slope.data
-    	
     
 def main():
     main_app = QApplication(sys.argv)
     window=gui()
+    LaneController(window)
     window.setWindowTitle('Graduation Project 2020 GUI Tool')
     window.show()
     main_app.exec_()

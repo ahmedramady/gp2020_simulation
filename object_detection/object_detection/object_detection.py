@@ -117,7 +117,8 @@ class object_detection():
 			closest_distance = 100000
 
 		for x in range(center_x-center_range,center_x+center_range):
-				new_distance = self.get_distance(x,center_y)
+			for y in range(center_y-center_range,center_y+center_range):
+				new_distance = self.get_distance(x,y)
 				if math.isnan(new_distance):
 					continue
 				else:
