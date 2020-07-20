@@ -28,7 +28,7 @@ class gui(QDialog):
 	#publishers
         self.pub = rospy.Publisher('/car/ackermann_cmd_mux/output', AckermannDriveStamped, queue_size=1)
 	#subscribers
-	self.sub_object_action = rospy.Subscriber('/object_detection_action', Int32, self.object_action_callback)
+	self.sub_object_action = rospy.Subscriber('object_detection_action', Int32, self.object_action_callback)
 	self.distance_sub = rospy.Subscriber('/object_detection/center_distance', Float64, self.depthData)
 	###
 	self.maxSteer = 0.5
@@ -171,15 +171,20 @@ class gui(QDialog):
 
     def checkStatus(self):
         if self.current_status =="danger":
-            self.current_action = 11
+            self.current_action = 1
         elif self.current_status =="stop":
-            self.current_action = 11
-        elif self.current_status =="warning":
+            self.current_action = 1
+        elif self.current_status =="warning" or self.current_action == 2:
             self.speedslider.setValue(100)
+        elif self.current_action == 3:
+            self.speedslider.setValue(160)
+        elif self.current_action == 4:
+            self.speedslider.setValue(210)
         else:
             self.current_action = 0
 
     def object_action_callback(self,sub_object_action):
+	print "action:", sub_object_action.data
 	self.current_action = sub_object_action.data
 	
     

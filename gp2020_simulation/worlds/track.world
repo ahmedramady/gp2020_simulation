@@ -6,7 +6,23 @@
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
+ <plugin name="TrafficLights" filename="libTrafficLightsGUIPlugin.so">
 
+       <!-- Q -->
+       <key value="113" model="stop_light_post_475" color="red"/>
+       
+       <!-- A -->
+       <key value="97" model="stop_light_post_475" color="green"/>
+   
+
+       <!-- W -->
+       <key value="119" model="stop_light_post_476" color="red"/>
+
+
+       <!-- S -->
+       <key value="115" model="stop_light_post_476" color="green"/>
+
+     </plugin>
     </gui>
     <gravity>0 0 -9.8</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
@@ -11593,6 +11609,7 @@
       <static>1</static>
       <pose frame=''>16.7061 -11.7058 0.054 -0 -0 -2.7953</pose>
     </model>
+
     <model name='aws_robomaker_racetrack_StonePier_01_18'>
       <link name='aws_StonePier_01::body'>
         <pose frame=''>0 0 0 0 -0 0</pose>

@@ -96,7 +96,7 @@ class lane_detection():
 		#mask out the lane colours yellow (hMin = 29 , sMin = 193, vMin = 0), (hMax = 33 , sMax = 255, vMax = 255)
 
 		#(hMin = 0 , sMin = 0, vMin = 83), (hMax = 0 , sMax = 255, vMax = 154)
-
+		#replace colors depending on lane.
 		white_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([0,0,180], dtype=np.uint8), np.array([0,255,255], dtype=np.uint8))
 		dim_white_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([0,0,83], dtype=np.uint8), np.array([0,255,154], dtype=np.uint8))
 		red_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([166,228,0], dtype=np.uint8), np.array([179,255,255], dtype=np.uint8))

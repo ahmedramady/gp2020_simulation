@@ -18,9 +18,8 @@ class object_detection():
 		self.image_height = 480
 		self.current_depth_array = np.array(np.zeros((self.image_height,self.image_width)), dtype=np.float32)
 		self.current_center =(0,0)
-
 		# Publishers
-		self.pub = rospy.Publisher('object_detection_action', Int32, queue_size=1)
+		self.action_pub = rospy.Publisher('object_detection_action', Int32, queue_size=1)
 		self.distance_pub = rospy.Publisher('/object_detection/center_distance', Float64, queue_size=1) #ros-lane-detection	
 		# Subscribers
 		#self.image_sub = rospy.Subscriber('/camera/rgb/image_raw', Image, self.image_callback)
@@ -44,7 +43,7 @@ class object_detection():
 	def object_callback(self,data):
 		self.number_of_objects=0
 		for box in data.bounding_boxes:
-			if box.probability > 0.5:
+			if box.probability > 0.3:
 				#rospy.loginfo('object name %s',box.Class)
 				#get x,y width and height of the bounding box
 				x,y,w,h = self.convert((self.image_width,self.image_height),(box.xmin,box.xmax,box.ymin,box.ymax))
@@ -56,39 +55,111 @@ class object_detection():
 				position = self.check_position((u,v), (self.image_width/2,self.image_height/2))
 				statement = "in" if position == "center" else "on"
 				rospy.loginfo('{Object} is {dist} m away and is {msg} the {pos}'.format(Object=box.Class,dist=round(distance,2), pos=position, msg=statement))
-				action = ""
-				if distance<3:
-						print("in condition")
-						if box.Class == "traffic light red":
-							print("red light stop")
-							action += "1"
-						if box.Class == "Stop sign":
-							print("stop")
-							action += "s"
-						if box.Class == "traffic light green":
-							print("green light move")
-							action += "0"					
-						if box.Class == "no left turn":
-							print("no left turn WAIT FOR ACTION")
-						if box.Class == "no right turn":
-							print("no right turn WAIT FOR ACTION")
-						if box.Class == "traffic light green":
-							print("green light move")
-						if box.Class == "traffic light yellow":
-							print("traffic light yellow")
-				if "1" in action:
-					msg = 1
-					self.pub.publish(msg)
-					print("stop")
-				elif "s" in action:
-					msg = 1
-					self.pub.publish(msg)
-				elif "0" in action:
-					msg = 0
-					self.pub.publish(msg)
+				action =""
+				if distance < 2.5:
+					detected_object = box.Class
+					action = self.decide_action(detected_object)
+						
+				self.take_action(action)
 				self.number_of_objects = self.number_of_objects + 1
 
 		rospy.loginfo('Number of objects detected with confidence: {objects}'.format(objects=self.number_of_objects))
+
+	def decide_action(self, detected_object):
+		action = ""
+		if detected_object == "traffic light red":
+			print("red light stop")
+			action += "red"
+		if detected_object == "traffic light green":
+			print("green light move")
+			action += "green"
+		if detected_object == "traffic light yellow":
+			print("traffic light yellow")
+			action += "yellow"
+		if detected_object == "Stop sign":
+			print("stop")
+			action += "stop"
+		if detected_object == "no left turn":
+			print("no left turn WAIT FOR ACTION")
+			action+="noleft"
+		if detected_object == "no right turn":
+			print("no right turn WAIT FOR ACTION")
+			action+="noright"
+		if detected_object == "two way traffic":
+			print("two way traffic WAIT FOR ACTION")
+			action+="2way"
+		if detected_object == "no entry":
+			action+="noentry"
+			print("no entry turn WAIT FOR ACTION")
+		if detected_object == "No parking":
+			print("no parking WAIT FOR ACTION")
+			action+="nopark"
+		if detected_object == "one way traffic":
+			print("one way traffic turn WAIT FOR ACTION")
+			action += "1way"
+		if detected_object == "no U turn":
+			print("no U turn WAIT FOR ACTION")
+			action += "noU"
+		if detected_object == "parking":
+			print("parking WAIT FOR ACTION")
+			action += "park"
+		if detected_object == "walking":
+			print("walking WAIT FOR ACTION")
+			action += "walking"
+		if detected_object == "speed limit <30":
+			print("speed limit <30 WAIT FOR ACTION")
+			action += "low"
+		if detected_object == "speed limit >80":
+			print("speed limit >80 WAIT FOR ACTION")
+			action += "high"
+		if detected_object == "speed limit >30":
+			print("speed limit >30 WAIT FOR ACTION")
+			action += "mid"
+		if detected_object == "Person" or detected_object == "Bicycle" or detected_object == "motorcycle":
+			print("person/bike/motorcycle WAIT FOR ACTION")
+			action += "pbm"
+		if detected_object == "Train":
+			print("Train WAIT FOR ACTION")
+			action += "train"
+		if detected_object == "Car" or detected_object == "Bus" or detected_object == "Truck":
+			print("vehicle WAIT FOR ACTION")
+			action += "vehicle"
+	
+		return action
+
+	def take_action(self, action):
+		msg = 0
+		if "red" in action or "stop" in action or "train" in action:
+			msg = 1
+			print("stop")
+		elif "yellow" in action or "low" in action or "walking" in action:
+			msg = 2
+		elif "mid" in action:
+			msg = 3
+		elif "high" in action:
+			msg = 4
+		elif "2way" in action:
+			msg = 5 #disable left lane
+		elif "1way" in action:
+			msg = 6 #act as if one lane
+		elif "park" in action:
+			msg = 7
+		elif "nopark" in action:
+			msg = 8
+		#actions that relate to navigation
+		elif "noleft" in action:
+			msg = 9
+		elif "noright" in action:
+			msg = 10
+		elif "noU" in action:
+			msg = 11
+		elif "noentry" in action:
+			msg = 12
+		#actions that relate to tracking
+		elif "bpm" in action or "vehicle" in action:
+			msg = 13
+		print msg
+		self.action_pub.publish(msg)
 
 	def convert(self, size, box):
 		x = box[0] #xmin

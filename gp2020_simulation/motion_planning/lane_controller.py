@@ -11,8 +11,10 @@ class LaneController ():
         self.mainController = gui
 	self.mainController.parallelparkbutton.clicked.connect(self.startParkingThread)
         #lane controller 
+        self.checkParking()
         self.mainController.laneslider.valueChanged.connect(self.switchLane)
         self.mainController.lanedisplay.setText('Right')
+        self.checkWay()
         self.mainController.laneslider.setValue(1)
         self.current_lane = 2
         self.current_slope = 0
@@ -22,6 +24,14 @@ class LaneController ():
         #subscribers
         self.lane_sub = rospy.Subscriber('/lane_controller', Int32, self.lane_callback)
         self.lane_slope = rospy.Subscriber('/lane_detection_slope', Float64, self.lane_slope_callback)
+
+    def checkWay(self):
+        if self.mainController.current_action == 5 or self.mainController.current_action == 6:
+            self.mainController.laneslider.enabled(False)
+
+    def checkParking(self):
+        if self.mainController.current_action == 8:
+            self.mainController.parallelparkbutton.enabled(False)
 
     def startParkingThread(self):
         try:
@@ -95,7 +105,8 @@ class LaneController ():
             self.lane_pub.publish(self.current_lane)
 
        	    if self.mainController.mode == "auto":
-		    if self.mainController.current_action == 1 or self.mainController.current_action == 11:
+		    print self.mainController.current_action
+		    if self.mainController.current_action == 1:
 			print("STOP")
 			self.mainController.stopbutton.click()
 		    elif self.mainController.current_action == 0:
