@@ -13,7 +13,6 @@ from std_msgs.msg import Float64
 import os
 dirname = os.path.dirname(__file__)
 filename = os.path.join(dirname, '../gui')
-
 sys.path.insert(1, filename)
 from gui import gui
 

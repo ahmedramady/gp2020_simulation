@@ -2,10 +2,11 @@
   <world name='default'>
     <gui fullscreen='0'>
       <camera name='gzclient_camera'>
-        <pose frame=''>-1.46744 -15.919 3.67717 0 0.857786 0.529362</pose>
+        <pose frame=''>-0.692957 -15.467 2.31182 0 0.305798 0.236897</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
+
     </gui>
     <gravity>0 0 -9.8</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
@@ -2064,200 +2065,6 @@
       <static>1</static>
       <pose frame=''>18.3999 -10.9106 0.054 0 -0 0</pose>
     </model>
-    <model name='aws_robomaker_racetrack_CrashworthBucket_01_20'>
-      <link name='aws_CrashworthBucket_01::body'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-        <gravity>1</gravity>
-        <inertial>
-          <mass>5</mass>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-        </inertial>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file://models/aws_robomaker_racetrack_CrashworthBucket_01/meshes/aws_CrashworthBucket_01_visual.DAE</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <shader type='pixel'>
-              <normal_map>__default__</normal_map>
-            </shader>
-          </material>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <cast_shadows>1</cast_shadows>
-          <transparency>0</transparency>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
-        <collision name='collision_0'>
-          <laser_retro>0</laser_retro>
-          <max_contacts>10</max_contacts>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <geometry>
-            <mesh>
-              <uri>file://models/aws_robomaker_racetrack_CrashworthBucket_01/meshes/aws_CrashworthBucket_01_collision.DAE</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>1</mu>
-                <mu2>1</mu2>
-                <fdir1>0 0 0</fdir1>
-                <slip1>0</slip1>
-                <slip2>0</slip2>
-              </ode>
-              <torsional>
-                <coefficient>1</coefficient>
-                <patch_radius>0</patch_radius>
-                <surface_radius>0</surface_radius>
-                <use_patch_radius>1</use_patch_radius>
-                <ode>
-                  <slip>0</slip>
-                </ode>
-              </torsional>
-            </friction>
-            <bounce>
-              <restitution_coefficient>0</restitution_coefficient>
-              <threshold>1e+06</threshold>
-            </bounce>
-            <contact>
-              <collide_without_contact>0</collide_without_contact>
-              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
-              <collide_bitmask>1</collide_bitmask>
-              <ode>
-                <soft_cfm>0</soft_cfm>
-                <soft_erp>0.2</soft_erp>
-                <kp>1e+13</kp>
-                <kd>1</kd>
-                <max_vel>0.01</max_vel>
-                <min_depth>0</min_depth>
-              </ode>
-              <bullet>
-                <split_impulse>1</split_impulse>
-                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
-                <soft_cfm>0</soft_cfm>
-                <soft_erp>0.2</soft_erp>
-                <kp>1e+13</kp>
-                <kd>1</kd>
-              </bullet>
-            </contact>
-          </surface>
-        </collision>
-        <enable_wind>0</enable_wind>
-      </link>
-      <static>1</static>
-      <pose frame=''>-22.169 12.8311 0 0 -0 0</pose>
-    </model>
-    <model name='aws_robomaker_racetrack_CrashworthBucket_01_21'>
-      <link name='aws_CrashworthBucket_01::body'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-        <gravity>1</gravity>
-        <inertial>
-          <mass>5</mass>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-        </inertial>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file://models/aws_robomaker_racetrack_CrashworthBucket_01/meshes/aws_CrashworthBucket_01_visual.DAE</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <shader type='pixel'>
-              <normal_map>__default__</normal_map>
-            </shader>
-          </material>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <cast_shadows>1</cast_shadows>
-          <transparency>0</transparency>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
-        <collision name='collision_0'>
-          <laser_retro>0</laser_retro>
-          <max_contacts>10</max_contacts>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <geometry>
-            <mesh>
-              <uri>file://models/aws_robomaker_racetrack_CrashworthBucket_01/meshes/aws_CrashworthBucket_01_collision.DAE</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>1</mu>
-                <mu2>1</mu2>
-                <fdir1>0 0 0</fdir1>
-                <slip1>0</slip1>
-                <slip2>0</slip2>
-              </ode>
-              <torsional>
-                <coefficient>1</coefficient>
-                <patch_radius>0</patch_radius>
-                <surface_radius>0</surface_radius>
-                <use_patch_radius>1</use_patch_radius>
-                <ode>
-                  <slip>0</slip>
-                </ode>
-              </torsional>
-            </friction>
-            <bounce>
-              <restitution_coefficient>0</restitution_coefficient>
-              <threshold>1e+06</threshold>
-            </bounce>
-            <contact>
-              <collide_without_contact>0</collide_without_contact>
-              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
-              <collide_bitmask>1</collide_bitmask>
-              <ode>
-                <soft_cfm>0</soft_cfm>
-                <soft_erp>0.2</soft_erp>
-                <kp>1e+13</kp>
-                <kd>1</kd>
-                <max_vel>0.01</max_vel>
-                <min_depth>0</min_depth>
-              </ode>
-              <bullet>
-                <split_impulse>1</split_impulse>
-                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
-                <soft_cfm>0</soft_cfm>
-                <soft_erp>0.2</soft_erp>
-                <kp>1e+13</kp>
-                <kd>1</kd>
-              </bullet>
-            </contact>
-          </surface>
-        </collision>
-        <enable_wind>0</enable_wind>
-      </link>
-      <static>1</static>
-      <pose frame=''>-17.3216 9.66872 0.054 0 -0 0</pose>
-    </model>
     <model name='aws_robomaker_racetrack_CrashworthBucket_01_22'>
       <link name='aws_CrashworthBucket_01::body'>
         <pose frame=''>0 0 0 0 -0 0</pose>
@@ -2839,103 +2646,6 @@
       </link>
       <static>1</static>
       <pose frame=''>3.82438 -0.358379 0 0 -0 0</pose>
-    </model>
-    <model name='aws_robomaker_racetrack_CrashworthBucket_01_28'>
-      <link name='aws_CrashworthBucket_01::body'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-        <gravity>1</gravity>
-        <inertial>
-          <mass>5</mass>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-        </inertial>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file://models/aws_robomaker_racetrack_CrashworthBucket_01/meshes/aws_CrashworthBucket_01_visual.DAE</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <shader type='pixel'>
-              <normal_map>__default__</normal_map>
-            </shader>
-          </material>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <cast_shadows>1</cast_shadows>
-          <transparency>0</transparency>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
-        <collision name='collision_0'>
-          <laser_retro>0</laser_retro>
-          <max_contacts>10</max_contacts>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <geometry>
-            <mesh>
-              <uri>file://models/aws_robomaker_racetrack_CrashworthBucket_01/meshes/aws_CrashworthBucket_01_collision.DAE</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>1</mu>
-                <mu2>1</mu2>
-                <fdir1>0 0 0</fdir1>
-                <slip1>0</slip1>
-                <slip2>0</slip2>
-              </ode>
-              <torsional>
-                <coefficient>1</coefficient>
-                <patch_radius>0</patch_radius>
-                <surface_radius>0</surface_radius>
-                <use_patch_radius>1</use_patch_radius>
-                <ode>
-                  <slip>0</slip>
-                </ode>
-              </torsional>
-            </friction>
-            <bounce>
-              <restitution_coefficient>0</restitution_coefficient>
-              <threshold>1e+06</threshold>
-            </bounce>
-            <contact>
-              <collide_without_contact>0</collide_without_contact>
-              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
-              <collide_bitmask>1</collide_bitmask>
-              <ode>
-                <soft_cfm>0</soft_cfm>
-                <soft_erp>0.2</soft_erp>
-                <kp>1e+13</kp>
-                <kd>1</kd>
-                <max_vel>0.01</max_vel>
-                <min_depth>0</min_depth>
-              </ode>
-              <bullet>
-                <split_impulse>1</split_impulse>
-                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
-                <soft_cfm>0</soft_cfm>
-                <soft_erp>0.2</soft_erp>
-                <kp>1e+13</kp>
-                <kd>1</kd>
-              </bullet>
-            </contact>
-          </surface>
-        </collision>
-        <enable_wind>0</enable_wind>
-      </link>
-      <static>1</static>
-      <pose frame=''>14.9648 -18.6736 0.054 0 -0 0</pose>
     </model>
     <model name='aws_robomaker_racetrack_CrashworthBucket_01_29'>
       <link name='aws_CrashworthBucket_01::body'>
@@ -9663,88 +9373,6 @@
       <static>1</static>
       <pose frame=''>9.89165 4.45225 0 0 0 -0.045392</pose>
     </model>
-    <model name='aws_robomaker_racetrack_Fence_02_11'>
-      <link name='aws_Fence_02::body'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-        <gravity>1</gravity>
-        <inertial>
-          <mass>5</mass>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <inertia>
-            <ixx>9.6</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>8.2</iyy>
-            <iyz>0</iyz>
-            <izz>2.1</izz>
-          </inertia>
-        </inertial>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file://models/aws_robomaker_racetrack_Fence_02/meshes/aws_Fence_02_visual.DAE</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <shader type='pixel'>
-              <normal_map>__default__</normal_map>
-            </shader>
-          </material>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <cast_shadows>1</cast_shadows>
-          <transparency>0</transparency>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
-        <collision name='collision_0'>
-          <laser_retro>0</laser_retro>
-          <max_contacts>10</max_contacts>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <geometry>
-            <mesh>
-              <uri>file://models/aws_robomaker_racetrack_Fence_02/meshes/aws_Fence_02_collision.DAE</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>1</mu>
-                <mu2>1</mu2>
-                <fdir1>0 0 0</fdir1>
-                <slip1>0</slip1>
-                <slip2>0</slip2>
-              </ode>
-              <torsional>
-                <coefficient>1</coefficient>
-                <patch_radius>0</patch_radius>
-                <surface_radius>0</surface_radius>
-                <use_patch_radius>1</use_patch_radius>
-                <ode>
-                  <slip>0</slip>
-                </ode>
-              </torsional>
-            </friction>
-            <bounce>
-              <restitution_coefficient>0</restitution_coefficient>
-              <threshold>1e+06</threshold>
-            </bounce>
-            <contact>
-              <collide_without_contact>0</collide_without_contact>
-              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
-              <collide_bitmask>1</collide_bitmask>
-              <ode/>
-            </contact>
-          </surface>
-        </collision>
-        <enable_wind>0</enable_wind>
-      </link>
-      <static>1</static>
-      <pose frame=''>10.0686 7.48939 0 0 -0 0.450699</pose>
-    </model>
     <model name='aws_robomaker_racetrack_Fence_02_12'>
       <link name='aws_Fence_02::body'>
         <pose frame=''>0 0 0 0 -0 0</pose>
@@ -12061,103 +11689,6 @@
       </link>
       <static>1</static>
       <pose frame=''>28.0027 -3.03906 0.054 0 -0 -1.68291</pose>
-    </model>
-    <model name='aws_robomaker_racetrack_StonePier_01_19'>
-      <link name='aws_StonePier_01::body'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-        <gravity>1</gravity>
-        <inertial>
-          <mass>10</mass>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <inertia>
-            <ixx>0</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>0</iyy>
-            <iyz>0</iyz>
-            <izz>0</izz>
-          </inertia>
-        </inertial>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>file://models/aws_robomaker_racetrack_StonePier_01/meshes/aws_StonePier_01_visual.DAE</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <shader type='pixel'>
-              <normal_map>__default__</normal_map>
-            </shader>
-          </material>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <cast_shadows>1</cast_shadows>
-          <transparency>0</transparency>
-          <meta>
-            <layer>0</layer>
-          </meta>
-        </visual>
-        <collision name='collision_0'>
-          <laser_retro>0</laser_retro>
-          <max_contacts>10</max_contacts>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <geometry>
-            <mesh>
-              <uri>file://models/aws_robomaker_racetrack_StonePier_01/meshes/aws_StonePier_01_collision.DAE</uri>
-              <scale>1 1 1</scale>
-            </mesh>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>1</mu>
-                <mu2>1</mu2>
-                <fdir1>0 0 0</fdir1>
-                <slip1>0</slip1>
-                <slip2>0</slip2>
-              </ode>
-              <torsional>
-                <coefficient>1</coefficient>
-                <patch_radius>0</patch_radius>
-                <surface_radius>0</surface_radius>
-                <use_patch_radius>1</use_patch_radius>
-                <ode>
-                  <slip>0</slip>
-                </ode>
-              </torsional>
-            </friction>
-            <bounce>
-              <restitution_coefficient>0</restitution_coefficient>
-              <threshold>1e+06</threshold>
-            </bounce>
-            <contact>
-              <collide_without_contact>0</collide_without_contact>
-              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
-              <collide_bitmask>1</collide_bitmask>
-              <ode>
-                <soft_cfm>0</soft_cfm>
-                <soft_erp>0.2</soft_erp>
-                <kp>1e+13</kp>
-                <kd>1</kd>
-                <max_vel>0.01</max_vel>
-                <min_depth>0</min_depth>
-              </ode>
-              <bullet>
-                <split_impulse>1</split_impulse>
-                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
-                <soft_cfm>0</soft_cfm>
-                <soft_erp>0.2</soft_erp>
-                <kp>1e+13</kp>
-                <kd>1</kd>
-              </bullet>
-            </contact>
-          </surface>
-        </collision>
-        <enable_wind>0</enable_wind>
-      </link>
-      <static>1</static>
-      <pose frame=''>9.84486 -11.2119 0.054 0 -0 -2.93657</pose>
     </model>
     <model name='aws_robomaker_racetrack_StonePier_01_20'>
       <link name='aws_StonePier_01::body'>
@@ -23183,15 +22714,15 @@
       </link>
     </model>
     <state world_name='default'>
-      <sim_time>9331 274000000</sim_time>
-      <real_time>608 863625957</real_time>
-      <wall_time>1594947201 882140915</wall_time>
-      <iterations>262803</iterations>
+      <sim_time>9218 266000000</sim_time>
+      <real_time>65 857190611</real_time>
+      <wall_time>1595186549 797038923</wall_time>
+      <iterations>30287</iterations>
       <model name='Stop Sign'>
-        <pose frame=''>4.28405 -13.7803 -0.751639 0 0 -1.17951</pose>
+        <pose frame=''>3.90241 -13.6891 -0.751639 0 0 -1.17951</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>4.28405 -13.7803 -0.751639 0 0 -1.17951</pose>
+          <pose frame=''>3.90241 -13.6891 -0.751639 0 0 -1.17951</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -23407,26 +22938,6 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='aws_robomaker_racetrack_CrashworthBucket_01_20'>
-        <pose frame=''>-22.169 12.8311 0 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='aws_CrashworthBucket_01::body'>
-          <pose frame=''>-22.169 12.8311 0 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='aws_robomaker_racetrack_CrashworthBucket_01_21'>
-        <pose frame=''>-17.3216 9.66872 0.054 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='aws_CrashworthBucket_01::body'>
-          <pose frame=''>-17.3216 9.66872 0.054 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
       <model name='aws_robomaker_racetrack_CrashworthBucket_01_22'>
         <pose frame=''>14.1427 -12.6734 0.054 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -23482,16 +22993,6 @@
         <scale>1 1 1</scale>
         <link name='aws_CrashworthBucket_01::body'>
           <pose frame=''>3.82438 -0.358379 0 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='aws_robomaker_racetrack_CrashworthBucket_01_28'>
-        <pose frame=''>2.62293 -15.5135 -0.473949 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='aws_CrashworthBucket_01::body'>
-          <pose frame=''>2.62293 -15.5135 -0.473949 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -24207,16 +23708,6 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='aws_robomaker_racetrack_Fence_02_11'>
-        <pose frame=''>10.0686 7.48939 0 0 -0 0.450699</pose>
-        <scale>1 1 1</scale>
-        <link name='aws_Fence_02::body'>
-          <pose frame=''>10.0686 7.48939 0 0 -0 0.450699</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
       <model name='aws_robomaker_racetrack_Fence_02_12'>
         <pose frame=''>1.65856 -1.03383 0 0 0 -1.02955</pose>
         <scale>1 1 1</scale>
@@ -24228,10 +23719,10 @@
         </link>
       </model>
       <model name='aws_robomaker_racetrack_Ground_01_00'>
-        <pose frame=''>-4.9 -2 0.05 0 -0 0</pose>
+        <pose frame=''>-4.24583 -1.5315 0.05 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='aws_Ground_01::body'>
-          <pose frame=''>-4.9 -2 0.05 0 -0 0</pose>
+          <pose frame=''>-4.24583 -1.5315 0.05 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -24278,10 +23769,10 @@
         </link>
       </model>
       <model name='aws_robomaker_racetrack_RaceStartLight_01_00'>
-        <pose frame=''>4.08395 -14.248 1.98261 0 -0 0</pose>
+        <pose frame=''>4.13359 -14.1692 1.99338 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='aws_RaceStartLight_01::body'>
-          <pose frame=''>4.08395 -14.248 1.98261 0 -0 0</pose>
+          <pose frame=''>4.13359 -14.1692 1.99338 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -24502,16 +23993,6 @@
         <scale>1 1 1</scale>
         <link name='aws_StonePier_01::body'>
           <pose frame=''>28.0027 -3.03906 0.054 0 0 -1.68291</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='aws_robomaker_racetrack_StonePier_01_19'>
-        <pose frame=''>9.84486 -11.2119 0.054 0 0 -2.93657</pose>
-        <scale>1 1 1</scale>
-        <link name='aws_StonePier_01::body'>
-          <pose frame=''>9.84486 -11.2119 0.054 0 0 -2.93657</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -25598,79 +25079,59 @@
         </link>
       </model>
       <model name='car'>
-        <pose frame=''>0.16621 -13.9291 0.101858 -1e-06 2e-06 -0.1818</pose>
+        <pose frame=''>-0.000272 -14.4498 0.101859 -2e-06 2e-06 -0.00924</pose>
         <scale>1 1 1</scale>
         <link name='base_link'>
-          <pose frame=''>0.16621 -13.9291 0.101858 -1e-06 2e-06 -0.1818</pose>
-          <velocity>-0.000127 -0.000545 -4.2e-05 0.000481 -0.000246 0.007951</velocity>
-          <acceleration>-0.026741 0.622613 -0.061967 1.01936 0.10309 -2.96144</acceleration>
-          <wrench>-0.133704 3.11307 -0.309838 0 -0 0</wrench>
+          <pose frame=''>-0.000272 -14.4498 0.101859 -2e-06 2e-06 -0.00924</pose>
+          <velocity>1e-06 1e-06 9e-06 -0 2e-06 -2e-06</velocity>
+          <acceleration>-0 -0 -0 1e-06 1.5e-05 -1e-06</acceleration>
+          <wrench>-0 -0 -0 0 -0 0</wrench>
         </link>
         <link name='left_front_wheel'>
-          <pose frame=''>0.503934 -13.8895 0.151859 1.57077 0.969675 -0.178283</pose>
-          <velocity>-0.000743 0.001815 0.000414 -0.036398 -0.015459 0.001605</velocity>
-          <acceleration>-1.60531 3.63967 -0.654035 -2.43405 -0.559084 -0.7474</acceleration>
-          <wrench>-0.546688 1.23949 -0.222732 0 -0 0</wrench>
+          <pose frame=''>0.325638 -14.3528 0.151858 -1.57094 1.45625 3.05514</pose>
+          <velocity>1e-06 2e-06 7e-06 -4.5e-05 -4e-06 7.4e-05</velocity>
+          <acceleration>0 -0 -0 0.000383 0.004431 -3e-06</acceleration>
+          <wrench>0 -0 -0 0 -0 0</wrench>
         </link>
         <link name='left_rear_wheel'>
-          <pose frame=''>0.184291 -13.8308 0.151859 -1.57076 0.156096 2.95977</pose>
-          <velocity>-0.000879 -0.000203 -0.000223 1.16385 1.37149 -3.12719</velocity>
-          <acceleration>-2.41951 -0.280786 -0.144463 1.59058 -0.202051 1.53181</acceleration>
-          <wrench>-0.823966 -0.095622 -0.049197 0 -0 0</wrench>
+          <pose frame=''>0.000652 -14.3498 0.151858 1.5708 -0.010244 -0.00924</pose>
+          <velocity>1e-06 1e-06 9e-06 -1.3e-05 2.1e-05 -1e-06</velocity>
+          <acceleration>0 -0 0 -0.00015 -0.01625 0</acceleration>
+          <wrench>0 -0 0 0 -0 0</wrench>
         </link>
         <link name='left_steering_hinge'>
-          <pose frame=''>0.503934 -13.8895 0.151858 1.95736 1.57077 1.7791</pose>
-          <velocity>-0.000587 0.001918 0.000229 -0.033066 0.005804 0.008302</velocity>
-          <acceleration>-1.21433 3.82847 0.468868 0.831297 -0.566963 -1.9449</acceleration>
-          <wrench>-0.121433 0.382847 0.046887 0 -0 0</wrench>
+          <pose frame=''>0.325638 -14.3528 0.151858 1.76815 1.57075 1.68184</pose>
+          <velocity>1e-06 2e-06 8e-06 -0.000116 1.2e-05 7.3e-05</velocity>
+          <acceleration>0 -0 -0 -0 -0 -2e-06</acceleration>
+          <wrench>0 -0 -0 0 -0 0</wrench>
         </link>
         <link name='right_front_wheel'>
-          <pose frame=''>0.467775 -14.0862 0.151858 -1.57078 -0.081721 2.95722</pose>
-          <velocity>0.001283 0.001468 -0.000414 -0.029221 0.026447 0.001537</velocity>
-          <acceleration>2.59077 2.93718 0.669696 -0.108647 1.00014 1.24548</acceleration>
-          <wrench>0.882285 1.00025 0.228065 0 -0 0</wrench>
+          <pose frame=''>0.32379 -14.5528 0.151858 -1.56887 1.56069 -3.13624</pose>
+          <velocity>0 -2e-06 7e-06 4.7e-05 -4.4e-05 -0.000101</velocity>
+          <acceleration>0 0 0 -7.1e-05 0.020851 3e-06</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='right_rear_wheel'>
-          <pose frame=''>0.148131 -14.0275 0.151859 1.57084 -0.113139 -0.181771</pose>
-          <velocity>0.000711 -0.000508 0.000149 -1.14054 -1.4226 -3.13006</velocity>
-          <acceleration>1.87245 -1.09794 -0.043772 -2.51586 0.87181 1.1031</acceleration>
-          <wrench>0.637662 -0.373904 -0.014907 0 -0 0</wrench>
+          <pose frame=''>-0.001196 -14.5498 0.151858 1.57079 -0.055084 -0.00924</pose>
+          <velocity>0 0 9e-06 -3e-06 1.7e-05 -1e-06</velocity>
+          <acceleration>0 0 -0 -0.00012 -0.012973 0</acceleration>
+          <wrench>0 0 -0 0 -0 0</wrench>
         </link>
         <link name='right_steering_hinge'>
-          <pose frame=''>0.467774 -14.0862 0.151858 2.05676 1.57078 1.87239</pose>
-          <velocity>0.00112 0.001914 1.3e-05 0.010943 -0.002183 0.00719</velocity>
-          <acceleration>2.20185 3.83715 0.013756 -0.0695 1.23472 -1.64938</acceleration>
-          <wrench>0.220185 0.383715 0.001376 0 -0 0</wrench>
+          <pose frame=''>0.32379 -14.5528 0.151858 2.41158 1.57079 2.41501</pose>
+          <velocity>1e-06 0 8e-06 -3.4e-05 2e-06 -0.000103</velocity>
+          <acceleration>0 -0 -0 0 -0 2e-06</acceleration>
+          <wrench>0 -0 -0 0 -0 0</wrench>
         </link>
       </model>
       <model name='ground_plane'>
-        <pose frame=''>0 0 -2.20009e+07 0 -0 0</pose>
+        <pose frame=''>0 0 -1.97168e+07 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>0 0 -2.20009e+07 0 -0 0</pose>
-          <velocity>0 0 -20765.8 0 -0 0</velocity>
+          <pose frame=''>0 0 -1.97168e+07 0 -0 0</pose>
+          <velocity>0 0 -19658.3 0 -0 0</velocity>
           <acceleration>0 0 -9.8 0 -0 0</acceleration>
           <wrench>0 0 -9.8 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='suv'>
-        <pose frame=''>1.37858 -14.006 0.09357 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>1.37858 -14.006 0.09357 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='suv_0'>
-        <pose frame=''>-0.649283 -14.0008 0.098671 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>-0.649283 -14.0008 0.098671 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <light name='sun'>
@@ -25887,7 +25348,7 @@
             <cameraInfoTopicName>/camera/rgb/camera_info</cameraInfoTopicName>
             <depthImageCameraInfoTopicName>/camera/depth/camera_info</depthImageCameraInfoTopicName>
             <frameName>camera_depth_optical_frame</frameName>
-            <pointCloudCutoff>0.4</pointCloudCutoff>
+            <pointCloudCutoff>0.45</pointCloudCutoff>
             <hackBaseline>0.07</hackBaseline>
             <distortionK1>0.0</distortionK1>
             <distortionK2>0.0</distortionK2>
@@ -26320,89 +25781,7 @@
         <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
         <legacyModeNS>1</legacyModeNS>
       </plugin>
-      <pose frame=''>0 -14.25 0.05 0 -0 0</pose>
-    </model>
-    <model name='suv'>
-      <static>1</static>
-      <link name='link'>
-        <gravity>1</gravity>
-        <collision name='collision'>
-          <pose frame=''>0 0 0 0 0 -1.5708</pose>
-          <geometry>
-            <mesh>
-              <scale>0.01 0.01 0.01</scale>
-              <uri>model://suv/meshes/suv.obj</uri>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <pose frame=''>0 0 0 0 0 -1.5708</pose>
-          <geometry>
-            <mesh>
-              <scale>0.01 0.01 0.01</scale>
-              <uri>model://suv/meshes/suv.obj</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>1.37858 -14.006 0 0 -0 0</pose>
-    </model>
-    <model name='suv_0'>
-      <static>1</static>
-      <link name='link'>
-        <gravity>1</gravity>
-        <collision name='collision'>
-          <pose frame=''>0 0 0 0 0 -1.5708</pose>
-          <geometry>
-            <mesh>
-              <scale>0.01 0.01 0.01</scale>
-              <uri>model://suv/meshes/suv.obj</uri>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <pose frame=''>0 0 0 0 0 -1.5708</pose>
-          <geometry>
-            <mesh>
-              <scale>0.01 0.01 0.01</scale>
-              <uri>model://suv/meshes/suv.obj</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>-0.649283 -14.0008 0 0 -0 0</pose>
+      <pose frame=''>0 -14.45 0.05 0 -0 0</pose>
     </model>
   </world>
 </sdf>

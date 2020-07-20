@@ -5,8 +5,8 @@ import numpy as np
 def blur( img, kernel_size):
     return cv2.GaussianBlur(img, (kernel_size, kernel_size), 0)
 
-def to_hls(img):
-    return cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
+def to_hsv(img):
+    return cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
 
 def isolate_color_mask(img, low_thresh, high_thresh):
     assert(low_thresh.all() >=0  and low_thresh.all() <=255)
@@ -79,6 +79,6 @@ def get_hough_lines( img, rho=1, theta=np.pi/180, threshold=20, min_line_len=20,
 								minLineLength=min_line_len, maxLineGap=max_line_gap)
 		return lines
 
-def show_image(img):
-    cv2.imshow("Image Window", img)
+def show_image(img,title="Image Window"):
+    cv2.imshow(title, img)
     cv2.waitKey(3)

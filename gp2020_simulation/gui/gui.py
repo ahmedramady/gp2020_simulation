@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-import sys
-import rospy
-import time
+import sys, rospy, time, os
 from std_msgs.msg import Char, Int32, Float64
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -12,7 +10,9 @@ from PyQt5.uic import loadUi
 #from PyQt5 import *f
 from ackermann_msgs.msg import AckermannDriveStamped
 from std_msgs.msg import Float64
-import os
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, '../motion_planning')
+sys.path.insert(0, filename)
 from lane_controller import LaneController
 
 class gui(QDialog):
@@ -39,12 +39,18 @@ class gui(QDialog):
         self.depthSafeSignal.connect(self.setSafetyStatus_Safe)
 	self.current_action = 0
 	self.current_status = "safe"
+	self.Autonomous = None
 	#buttons
         self.forwardbutton.clicked.connect(self.forward)
         self.backwardbutton.clicked.connect(self.backward)
         self.rightbutton.clicked.connect(self.right)
         self.leftbutton.clicked.connect(self.left)
         self.stopbutton.clicked.connect(self.stop)
+	#manual vs auto
+	self.automatic.clicked.connect(self.autonomous_mode)
+	self.manual.clicked.connect(self.manual_mode)
+	self.backbutton.clicked.connect(self.frame_5.show)
+	self.mode = ""
 	#speed controller
 	self.currentDirection = 4
         self.currentSpeed = 1
@@ -52,6 +58,13 @@ class gui(QDialog):
         self.speeddisplay.setText('LOW')
         self.speedslider.setValue(130)
 	
+    def autonomous_mode(self):
+	self.mode = "auto"
+	self.Autonomous = LaneController(self)
+
+    def manual_mode(self):
+	self.mode = "manual"
+	self.frame_5.hide()
 
     def keyPressEvent(self, event):
         if(event.key()==QtCore.Qt.Key_W):
@@ -115,7 +128,6 @@ class gui(QDialog):
 	    self.currentSpeed = 5
             self.ackermann_cmd_msg.drive.speed = self.currentSpeed
             self.setSpeedLevel('HIGH')
-	#self.pub.publish(self.ackermann_cmd_msg)
 
     def setSpeedLevel(self, value):
         self.speeddisplay.setText(str(value))
@@ -164,8 +176,6 @@ class gui(QDialog):
             self.current_action = 11
         elif self.current_status =="warning":
             self.speedslider.setValue(100)
-        elif self.current_action == 1 :
-            self.current_action = 1 
         else:
             self.current_action = 0
 
@@ -176,7 +186,7 @@ class gui(QDialog):
 def main():
     main_app = QApplication(sys.argv)
     window=gui()
-    LaneController(window)
+    
     window.setWindowTitle('Graduation Project 2020 GUI Tool')
     window.show()
     main_app.exec_()

@@ -33,14 +33,14 @@ class lane_detection():
 		for x1,y1,x2,y2 in lines[:, 0]:
 			m = (float(y2) - y1) / (x2 - x1)
 		
-			if m >= 0: 
+			if m > 0: 
 				right.append([x1,y1,x2,y2,m])
 				self.pub_slope.publish(m)
 				
 			else: 
 				left.append([x1,y1,x2,y2,m])
 				self.pub_slope.publish(m)
-				print "left slope: ", m
+			
 				
 		average_slope_left, average_slope_right = utils.get_slope_average(left,right)
 
@@ -48,18 +48,18 @@ class lane_detection():
 			for line in middle:
 				for x1,y1,x2,y2 in line:
 					m = (float(y2) - y1) / (x2 - x1)
-					print "center slope :" , m
+					
 					if current_lane == 1:
 						right.append([x1,y1,x2,y2,m])
-						if abs(m) > abs(average_slope_left) and abs(m) != float("inf"):
+						if abs(m) > abs(average_slope_left) and abs(m) != float("inf") and m != 0:
 							left = []
 							m =  (m + average_slope_left)/ 2
-					
+
 						self.pub_slope.publish(m)
 							
 					else:
 						left.append([x1,y1,x2,y2,m])
-						if abs(m) > abs(average_slope_right) and abs(m) != float("inf"):
+						if abs(m) > abs(average_slope_right) and abs(m) != float("inf") and m != 0:
 							right = []
 							m =  (m + average_slope_left)/ 2
 					
@@ -93,18 +93,23 @@ class lane_detection():
 			rospy.logerr("CvBridge Error: {0}".format(e))
 		image = cv_image
 		
-		#mask out the lane colours
-		white_mask = utils.isolate_color_mask(utils.to_hls(image), np.array([0, 200, 0], dtype=np.uint8), np.array([200, 255, 255], dtype=np.uint8))
-		red_mask = utils.isolate_color_mask(utils.to_hls(image), np.array([155,25,0], dtype=np.uint8), np.array([200,255,255], dtype=np.uint8))
+		#mask out the lane colours yellow (hMin = 29 , sMin = 193, vMin = 0), (hMax = 33 , sMax = 255, vMax = 255)
+
+		#(hMin = 0 , sMin = 0, vMin = 83), (hMax = 0 , sMax = 255, vMax = 154)
+
+		white_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([0,0,180], dtype=np.uint8), np.array([0,255,255], dtype=np.uint8))
+		dim_white_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([0,0,83], dtype=np.uint8), np.array([0,255,154], dtype=np.uint8))
+		red_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([166,228,0], dtype=np.uint8), np.array([179,255,255], dtype=np.uint8))
+		yellow_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([ 29,   193, 0], dtype=np.uint8), np.array([ 33, 255, 255], dtype=np.uint8))
 		#join the masked images
-		edge_mask = cv2.bitwise_or(red_mask, red_mask)
+		edge_mask = red_mask
 		middle_mask = white_mask
 		#blur to remove noise
 		edge_mask = utils.blur(edge_mask,7)
 		middle_mask = utils.blur(middle_mask,7)
 		#duplicate the mask for more contrast
-		masked_img_edge = cv2.bitwise_and(edge_mask, edge_mask, mask=edge_mask)
-		masked_img_middle = cv2.bitwise_and(middle_mask, middle_mask, mask=middle_mask)
+		masked_img_edge = cv2.bitwise_and(image, image, mask=edge_mask)
+		masked_img_middle = cv2.bitwise_and(image, image, mask=middle_mask)
 		#blur again to remove added noise
 		blur_image_edge = utils.blur(masked_img_edge,7)
 		blur_image_middle = utils.blur(masked_img_middle,7)
@@ -140,9 +145,10 @@ class lane_detection():
 			rospy.loginfo("Error")
 			
 		# Show the converted image and publish messages to ros topics
-		utils.show_image(hough_img)
+		#utils.show_image(hough_img,"Lane Detection")
+		
 		self.pub.publish(message)
-		ros_image = self.bridge.cv2_to_imgmsg(hough_img, "bgr8")
+		ros_image = self.bridge.cv2_to_imgmsg(hough_img, "rgb8")
 		self.pub_image.publish(ros_image)
 
 def main():

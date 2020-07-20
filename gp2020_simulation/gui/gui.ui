@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>761</width>
-    <height>370</height>
+    <width>758</width>
+    <height>369</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -159,6 +159,9 @@ p, li { white-space: pre-wrap; }
    </property>
   </widget>
   <widget class="QFrame" name="frame_2">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>190</x>
@@ -166,6 +169,9 @@ p, li { white-space: pre-wrap; }
      <width>381</width>
      <height>221</height>
     </rect>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
    </property>
    <property name="styleSheet">
     <string notr="true">color: rgb(255, 255, 255);
@@ -258,11 +264,14 @@ background-color: rgb(0, 25, 50);</string>
     </property>
    </widget>
    <widget class="QPushButton" name="parallelparkbutton">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>230</x>
       <y>160</y>
-      <width>281</width>
+      <width>131</width>
       <height>51</height>
      </rect>
     </property>
@@ -271,6 +280,25 @@ background-color: rgb(0, 25, 50);</string>
     </property>
     <property name="text">
      <string>Parallel Park</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="backbutton">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>160</y>
+      <width>131</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 10, 20);</string>
+    </property>
+    <property name="text">
+     <string>Back</string>
     </property>
    </widget>
   </widget>
@@ -419,6 +447,64 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:20pt; vertical-align:sub;&quot;&gt;Lane Controller&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
+  </widget>
+  <widget class="QFrame" name="frame_5">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>70</y>
+     <width>381</width>
+     <height>221</height>
+    </rect>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 25, 50);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QPushButton" name="manual">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>120</y>
+      <width>251</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 10, 20);</string>
+    </property>
+    <property name="text">
+     <string>Manual</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="automatic">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>30</y>
+      <width>251</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 10, 20);</string>
+    </property>
+    <property name="text">
+     <string>Autonomous</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
