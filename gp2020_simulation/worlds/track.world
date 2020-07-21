@@ -25315,7 +25315,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/arwa/catkin_ws/src/gp2020_simulation/car_description/meshes/chassis.STL</uri>
+              <uri>../car_description/meshes/chassis.STL</uri>
             </mesh>
           </geometry>
           <material>
@@ -25330,7 +25330,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/arwa/catkin_ws/src/gp2020_simulation/car_description/meshes/kinect.dae</uri>
+              <uri>../car_description/meshes/kinect.dae</uri>
             </mesh>
           </geometry>
         </visual>
@@ -25432,7 +25432,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/arwa/catkin_ws/src/gp2020_simulation/car_description/meshes/left_rear_wheel.STL</uri>
+              <uri>../car_description/meshes/left_rear_wheel.STL</uri>
             </mesh>
           </geometry>
           <material>
@@ -25483,7 +25483,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/arwa/catkin_ws/src/gp2020_simulation/car_description/meshes/left_steering_hinge.STL</uri>
+              <uri>../car_description/meshes/left_steering_hinge.STL</uri>
             </mesh>
           </geometry>
         </visual>
@@ -25557,7 +25557,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/arwa/catkin_ws/src/gp2020_simulation/car_description/meshes/left_front_wheel.STL</uri>
+              <uri>../car_description/meshes/left_front_wheel.STL</uri>
             </mesh>
           </geometry>
           <material>
@@ -25637,7 +25637,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/arwa/catkin_ws/src/gp2020_simulation/car_description/meshes/right_rear_wheel.STL</uri>
+              <uri>../car_description/meshes/right_rear_wheel.STL</uri>
             </mesh>
           </geometry>
           <material>
@@ -25688,7 +25688,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/arwa/catkin_ws/src/gp2020_simulation/car_description/meshes/right_steering_hinge.STL</uri>
+              <uri>../car_description/meshes/right_steering_hinge.STL</uri>
             </mesh>
           </geometry>
         </visual>
@@ -25760,7 +25760,7 @@
           <geometry>
             <mesh>
               <scale>1 1 1</scale>
-              <uri>/home/arwa/catkin_ws/src/gp2020_simulation/car_description/meshes/right_front_wheel.STL</uri>
+              <uri>../car_description/meshes/right_front_wheel.STL</uri>
             </mesh>
           </geometry>
           <material>
