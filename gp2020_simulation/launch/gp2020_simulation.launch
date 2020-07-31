@@ -36,7 +36,7 @@
   </node>
 
 
-  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -y -14.45 -z 0.05 -model car"/>
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -y -14.45 -z 0 -model car"/>
 
 <!--
   <node pkg="nodelet" type="nodelet" name="laserscan_nodelet_manager" args="manager"/>

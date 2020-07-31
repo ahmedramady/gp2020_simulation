@@ -112,6 +112,7 @@ class gui(QDialog):
         self.ackermann_cmd_msg.drive.speed = 0
         self.ackermann_cmd_msg.drive.steering_angle = 0
         self.pub.publish(self.ackermann_cmd_msg)
+	self.speedslider.setValue(100) #go back to low speed
 
     def speedLevel(self, speed):
         if(speed ==  130):

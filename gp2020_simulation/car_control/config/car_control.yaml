@@ -31,6 +31,8 @@ car:
     joint: right_steering_hinge_joint
     type: effort_controllers/JointPositionController
     pid: {p: 1.0, i: 0.0, d: 0.5}
+
+
   
 
 
