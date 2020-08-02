@@ -1,7 +1,6 @@
 import rospy
 import time
 from std_msgs.msg import Char, Int32, Float64
-from std_msgs.msg import Float64
 import thread
 
 class LaneController ():
@@ -13,10 +12,9 @@ class LaneController ():
         #lane controller 
         self.checkParking()
         self.mainController.laneslider.valueChanged.connect(self.switchLane)
-        self.mainController.lanedisplay.setText('Right')
         self.checkWay()
-        self.mainController.laneslider.setValue(1)
-        self.current_lane = 2
+        self.mainController.laneslider.setValue(self.mainController.current_lane - 1)
+        #self.current_lane = 2
         self.current_slope = 0
         self.sonar_distance = -1
         #publishers
@@ -24,6 +22,7 @@ class LaneController ():
         #subscribers
         self.lane_sub = rospy.Subscriber('/lane_controller', Int32, self.lane_callback)
         self.lane_slope = rospy.Subscriber('/lane_detection_slope', Float64, self.lane_slope_callback)
+
 
     def checkWay(self):
         if self.mainController.current_action == 5 or self.mainController.current_action == 6:
@@ -53,7 +52,7 @@ class LaneController ():
 	self.mainController.speedslider.setValue(100)
 	self.mainController.maxSteer = 0.8 #45 degrees
         #first part of S
-        if self.current_lane == 1:
+        if self.mainController.current_lane == 1:
             self.mainController.backwardbutton.click()
             self.mainController.leftbutton.click()
         else:
@@ -66,7 +65,7 @@ class LaneController ():
         self.mainController.forwardbutton.click()
         time.sleep(1.5)
 
-        if self.current_lane == 1:
+        if self.mainController.current_lane == 1:
             self.mainController.backwardbutton.click()
             self.mainController.rightbutton.click()
         else:
@@ -75,7 +74,7 @@ class LaneController ():
         time.sleep(4)
         self.mainController.stopbutton.click()
         self.mainController.maxSteer = 0.5
-        if self.current_lane == 1:
+        if self.mainController.current_lane == 1:
             self.mainController.forwardbutton.click()
             self.mainController.leftbutton.click()
         else:
@@ -93,17 +92,17 @@ class LaneController ():
 	    self.mainController.lanedisplay.setText('Left')
         else:
 	    self.mainController.lanedisplay.setText('Right')
-        self.current_lane = currentValue + 1
+        self.mainController.current_lane = currentValue + 1
         self.mainController.laneslider.setValue(currentValue)
     
-    #self.current_lane = 2 right , 1 left 
+    #self.mainController.current_lane = 2 right , 1 left 
     #direction right 2 , 1 left 
     #self.currentSpeed = 1
 
     def lane_callback(self,lane_msg):
 	    self.mainController.checkStatus()
-            self.lane_pub.publish(self.current_lane)
-
+            self.lane_pub.publish(self.mainController.current_lane)
+	    
        	    if self.mainController.mode == "auto":
 		    print self.mainController.current_action
 		    if self.mainController.current_action == 1:
@@ -112,21 +111,24 @@ class LaneController ():
 		    elif self.mainController.current_action == 0:
 			if((lane_msg.data == 101)):
 			    print("moving forward")
+			   
 			    self.mainController.forwardbutton.click()
 			elif ((lane_msg.data == 110)):
-			    self.mainController.maxSteer = self.calculateAngle(self.current_slope,2,self.current_lane,self.mainController.currentSpeed)
+			    self.mainController.maxSteer = self.calculateAngle(self.current_slope,2,self.mainController.current_lane,self.mainController.currentSpeed)
 			    self.mainController.forwardbutton.click() 
 			    self.mainController.rightbutton.click()
 			    print("turning right")
+		
 			elif ((lane_msg.data==-110)):
-			    self.mainController.maxSteer = self.calculateAngle(self.current_slope,1,self.current_lane,self.mainController.currentSpeed)
+			    self.mainController.maxSteer = self.calculateAngle(self.current_slope,1,self.mainController.current_lane,self.mainController.currentSpeed)
 			    self.mainController.forwardbutton.click()
 			    self.mainController.leftbutton.click()
 			    print("turning left")
+		
 			
 			else:
-	 		    self.mainController.stopbutton.click()
-			    print("no lane")
+			    self.mainController.stopbutton.click()
+				
 	    else:
 			self.mainController.stopbutton.click()
 			self.lane_sub.unregister()

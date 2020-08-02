@@ -39,6 +39,7 @@ class gui(QDialog):
         self.depthSafeSignal.connect(self.setSafetyStatus_Safe)
 	self.current_action = 0
 	self.current_status = "safe"
+	self.current_lane = 2
 	self.Autonomous = None
 	#buttons
         self.forwardbutton.clicked.connect(self.forward)

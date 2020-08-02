@@ -47,23 +47,26 @@ class lane_detection():
 		if middle is not None:
 			for line in middle:
 				for x1,y1,x2,y2 in line:
-					m = (float(y2) - y1) / (x2 - x1)
-					
-					if current_lane == 1:
-						right.append([x1,y1,x2,y2,m])
-						if abs(m) > abs(average_slope_left) and abs(m) != float("inf") and m != 0:
-							left = []
-							m =  (m + average_slope_left)/ 2
+					if (x2 - x1) !=0:
+						m = (float(y2) - y1) / (x2 - x1)
 
-						self.pub_slope.publish(m)
+						if current_lane == 1:
+							right.append([x1,y1,x2,y2,m])
+							if abs(m) > abs(average_slope_left) and abs(m) != float("inf") and m != 0:
+								left = []
+								m =  (m + average_slope_left)/ 2
 							
-					else:
-						left.append([x1,y1,x2,y2,m])
-						if abs(m) > abs(average_slope_right) and abs(m) != float("inf") and m != 0:
-							right = []
-							m =  (m + average_slope_left)/ 2
-					
-						self.pub_slope.publish(m)
+
+							self.pub_slope.publish(m)
+								
+						else:
+							left.append([x1,y1,x2,y2,m])
+							if abs(m) > abs(average_slope_right) and abs(m) != float("inf") and m != 0:
+								right = []
+								m =  (m + average_slope_left)/ 2
+							
+						
+							self.pub_slope.publish(m)
 						
 		left = left if len(left)!=0 else None
 		right = right if len(right)!=0 else None
@@ -93,33 +96,47 @@ class lane_detection():
 			rospy.logerr("CvBridge Error: {0}".format(e))
 		image = cv_image
 		
-		#mask out the lane colours yellow (hMin = 29 , sMin = 193, vMin = 0), (hMax = 33 , sMax = 255, vMax = 255)
-
+		#mask out the lane colours 
+		#yellow (hMin = 29 , sMin = 193, vMin = 0), (hMax = 33 , sMax = 255, vMax = 255)
+		#red shadow = (hMin = 173 , sMin = 119, vMin = 75), (hMax = 179 , sMax = 255, vMax = 153)
+		#white shadow = (hMin = 0 , sMin = 0, vMin = 72), (hMax = 179 , sMax = 0, vMax = 92)
 		#(hMin = 0 , sMin = 0, vMin = 83), (hMax = 0 , sMax = 255, vMax = 154)
+
 		#replace colors depending on lane.
+		white_shadow_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([0,0,72], dtype=np.uint8), np.array([179,0,92], dtype=np.uint8))
+		red_shadow_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([173,119,75], dtype=np.uint8), np.array([179,255,153], dtype=np.uint8))
 		white_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([0,0,180], dtype=np.uint8), np.array([0,255,255], dtype=np.uint8))
 		dim_white_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([0,0,83], dtype=np.uint8), np.array([0,255,154], dtype=np.uint8))
 		red_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([166,228,0], dtype=np.uint8), np.array([179,255,255], dtype=np.uint8))
-		yellow_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([ 29,   193, 0], dtype=np.uint8), np.array([ 33, 255, 255], dtype=np.uint8))
+		yellow_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([ 29,210,0], dtype=np.uint8), np.array([ 179, 255, 255], dtype=np.uint8))
+
 		#join the masked images
-		edge_mask = red_mask
-		middle_mask = white_mask
+		red_mask = cv2.bitwise_or(red_shadow_mask, red_mask)
+		white_mask  = cv2.bitwise_or(white_shadow_mask, white_mask)
+
+		edge_mask = yellow_mask
+		middle_mask = dim_white_mask
+
 		#blur to remove noise
 		edge_mask = utils.blur(edge_mask,7)
 		middle_mask = utils.blur(middle_mask,7)
+
 		#duplicate the mask for more contrast
 		masked_img_edge = cv2.bitwise_and(image, image, mask=edge_mask)
 		masked_img_middle = cv2.bitwise_and(image, image, mask=middle_mask)
+
 		#blur again to remove added noise
 		blur_image_edge = utils.blur(masked_img_edge,7)
 		blur_image_middle = utils.blur(masked_img_middle,7)
+
 		#get edges using canny
 		canny_image_edge = utils.canny(blur_image_edge)
 		canny_image_middle = utils.canny(blur_image_middle)
+
 		#crop to focus on the region of interest (street)
-		roi = utils.get_aoi(image)
 		roi_image_edge = utils.get_aoi(canny_image_edge)
 		roi_image_middle = utils.get_aoi(canny_image_middle)
+
 		#get hough lines
 		lines_edges = utils.get_hough_lines(roi_image_edge, 1, np.pi/180, 100, 100, 50)
 		lines_middle = utils.get_hough_lines(roi_image_middle, 1, np.pi/180, 100, 100, 50)
@@ -145,8 +162,9 @@ class lane_detection():
 			rospy.loginfo("Error")
 			
 		# Show the converted image and publish messages to ros topics
-		#utils.show_image(hough_img,"Lane Detection")
-		
+		utils.show_image(hough_img,"Lane Detection")
+		#utils.show_image(blur_image_middle,"Middle Lane Detection")
+
 		self.pub.publish(message)
 		ros_image = self.bridge.cv2_to_imgmsg(hough_img, "rgb8")
 		self.pub_image.publish(ros_image)
