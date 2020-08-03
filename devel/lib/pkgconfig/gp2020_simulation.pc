@@ -1,0 +1,8 @@
+prefix=/home/mariemadel/catkin_ws/devel
+
+Name: gp2020_simulation
+Description: Description of gp2020_simulation
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: gazebo_ros

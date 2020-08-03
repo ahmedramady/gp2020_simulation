@@ -29642,6 +29642,14 @@
           </waypoint>
           <waypoint>
             <time>20</time>
+            <pose>0 -12.5 0 0 0 -1.5</pose>
+          </waypoint>
+          <waypoint>
+            <time>30</time>
+            <pose>0 -20 0 0 0 -1.5</pose>
+          </waypoint>
+          <waypoint>
+            <time>40</time>
             <pose>0 -20 0 0 0 -1.5</pose>
           </waypoint>
         </trajectory>
@@ -34711,5 +34719,24 @@
           </trajectory>
         </script>
       </actor>
+	<actor name="actor1">
+	  <pose>0 0 1.2 1.5 0 2.5</pose>
+		<gravity>1</gravity>
+	  <skin>
+	    <filename>walk.dae</filename>
+	    <scale>1.0</scale>
+	  </skin>
+	  <animation name="walking">
+	    <filename>walk.dae</filename>
+	    <scale>1.000000</scale>
+	    <interpolate_x>true</interpolate_x>
+	  </animation>
+	  <plugin name="actor1_plugin" filename="libActorPlugin.so">
+	    <target>0 -10 1.2</target>
+	    <target_weight>1.15</target_weight>
+	    <obstacle_weight>1.8</obstacle_weight>
+	    <animation_factor>5.1</animation_factor>
+	  </plugin>
+	</actor>
   </world>
 </sdf>
