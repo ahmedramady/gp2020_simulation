@@ -38,6 +38,7 @@ class gui(QDialog):
         self.depthWarningSignal.connect(self.setSafetyStatus_Warning)
         self.depthSafeSignal.connect(self.setSafetyStatus_Safe)
 	self.current_action = 0
+	self.current_input = 0
 	self.current_status = "safe"
 	self.current_lane = 2
 	self.Autonomous = None
@@ -172,22 +173,32 @@ class gui(QDialog):
 	self.current_status= "warning"
 
     def checkStatus(self):
+ 	res = [int(x) for x in str(self.current_action)]
         if self.current_status =="danger":
             self.current_action = 1
         elif self.current_status =="stop":
             self.current_action = 1
         elif self.current_status =="warning" or self.current_action == 2:
             self.speedslider.setValue(100)
-        elif self.current_action == 3:
-            self.speedslider.setValue(160)
-        elif self.current_action == 4:
-            self.speedslider.setValue(210)
-        else:
-            self.current_action = 0
+		
+# action is 4 digit number [parking, lane,direction, speed]
 
     def object_action_callback(self,sub_object_action):
-	print "action:", sub_object_action.data
-	self.current_action = sub_object_action.data
+	res = [int(x) for x in str(sub_object_action.data)]
+	action = [1] * 4
+	for i in range(5,9):
+		if res[i] == 2: 
+			action[3]= i
+	if res[8] == 4
+		action[3] = 8
+	for i in range(2,5):
+		if res[i] == 2:
+			action[2] = i
+	action [0] = res[0]
+	action [1] = res[1]
+	act = int("".join(map(str, action))) 
+	#print "action:", sub_object_action.data
+	self.current_input = act
 	
     
 def main():

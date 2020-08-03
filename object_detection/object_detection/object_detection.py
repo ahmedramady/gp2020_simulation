@@ -31,7 +31,7 @@ class object_detection():
 		cv2.imshow("Image Window", img)
 		cv2.waitKey(3)
 
-
+#stop sign 14
 #stop 1
 #right 2
 #left 3
@@ -56,9 +56,16 @@ class object_detection():
 				statement = "in" if position == "center" else "on"
 				rospy.loginfo('{Object} is {dist} m away and is {msg} the {pos}'.format(Object=box.Class,dist=round(distance,2), pos=position, msg=statement))
 				action =""
-				if distance < 2.5:
+				if math.isnan(distance):
+					distance = self.handle_nan(x,y,w,h)
+				if distance < 4:
 					detected_object = box.Class
-					action = self.decide_action(detected_object)
+					if (detected_object == "traffic ight red" or detected_object == " traffic light green" or detected_object == "traffic light yellow" or detected_object == "Person" or detected_object == "Car" or detected_object == "Stop sign" or detected_object == "truck" or detected_object == "Train" or detected_object == "motorcycle" or detected_object == "Bicycle" or detected_object == "Bus") and distance < 2:
+
+						action = self.decide_action(detected_object)
+					else:
+
+						action = self.decide_action(detected_object)
 						
 				self.take_action(action)
 				self.number_of_objects = self.number_of_objects + 1
@@ -123,43 +130,45 @@ class object_detection():
 			action += "train"
 		if detected_object == "Car" or detected_object == "Bus" or detected_object == "Truck":
 			print("vehicle WAIT FOR ACTION")
-			action += "vehicle"
-	
+			action += "vehicle"	
 		return action
 
 	def take_action(self, action):
-		msg = 0
-		if "red" in action or "stop" in action or "train" in action:
-			msg = 1
-			print("stop")
-		elif "yellow" in action or "low" in action or "walking" in action:
-			msg = 2
-		elif "mid" in action:
-			msg = 3
-		elif "high" in action:
-			msg = 4
-		elif "2way" in action:
-			msg = 5 #disable left lane
-		elif "1way" in action:
-			msg = 6 #act as if one lane
-		elif "park" in action:
-			msg = 7
-		elif "nopark" in action:
-			msg = 8
+		msg = [1] * 9
+		if "stop" in action:
+			msg[0] = 4
+			print("stop sign")
+		if "red" in action or "train" in action:
+			 msg[0] = 2
+		if "yellow" in action or "low" in action or "walking" in action:
+			msg[1] = 2 
+		if "mid" in action:
+			msg[2] = 2
+		if "high" in action:
+			msg[3] = 2 
+		if "2way" in action:
+			msg[7] = 3 #disable left lane
+		if "1way" in action:
+			msg[7] = 1 #act as if one lane
+		if "park" in action:
+			msg[8] = 2
+		if "nopark" in action:
+			msg[8] = 3
 		#actions that relate to navigation
-		elif "noleft" in action:
-			msg = 9
-		elif "noright" in action:
-			msg = 10
-		elif "noU" in action:
-			msg = 11
-		elif "noentry" in action:
-			msg = 12
+		if "noleft" in action:
+			msg[4] = 3
+		if "noright" in action:
+			msg[6] = 3
+		if "noU" in action:
+			msg[5] = 2
+		if "noentry" in action:
+			msg[5] = 2 
 		#actions that relate to tracking
-		elif "bpm" in action or "vehicle" in action:
-			msg = 13
-		print msg
-		self.action_pub.publish(msg)
+		if "bpm" in action or "vehicle" in action:
+			msg[7] = 2
+		res = int("".join(map(str, msg))) 
+		print res
+		self.action_pub.publish(res)
 
 	def convert(self, size, box):
 		x = box[0] #xmin
