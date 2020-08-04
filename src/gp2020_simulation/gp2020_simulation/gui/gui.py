@@ -38,7 +38,8 @@ class gui(QDialog):
         self.depthWarningSignal.connect(self.setSafetyStatus_Warning)
         self.depthSafeSignal.connect(self.setSafetyStatus_Safe)
 	self.current_action = 0
-	self.current_input = 0
+	self.current_input = [1]*4
+	self.current_input_block = [1]*2
 	self.current_status = "safe"
 	self.current_lane = 2
 	self.Autonomous = None
@@ -189,19 +190,19 @@ class gui(QDialog):
 	    action = [1] * 4
 	    for i in range(5,9):
 		if res[i] == 2: 
-			action[3]= i
+		    action[3]= i
 		if res[8] == 4:
 		    action[3] = 4
 		for i in range(2,5):
-			if res[i] == 2:
-				action[2] = i
+		    if res[i] == 2:
+			action[2] = i
 	    #values = 
 	    '''1 -> no action
 	    ,2 -> take action
 	    ,3 -> block action
 	    ,4 -> stop''' 
-	    action [0] = res[0]
-	    action [1] = res[1]
+	    action[0] = res[0]
+	    action[1] = res[1]
 
 	    #what action to block:
 	    blocked = [1] * 2
@@ -210,11 +211,12 @@ class gui(QDialog):
 				blocked[1]= i
 	    for i in range(2,5):
 		if res[i] == 2:
-			blocked[2] = i
-
+			blocked[0] = i
+	    
 		#print "action:", sub_object_action.data
 	    self.current_input = int("".join(map(str, action))) 
 	    self.current_input_block = int("".join(map(str, blocked))) 
+	    print(self.current_input)
     
 def main():
     main_app = QApplication(sys.argv)

@@ -136,6 +136,8 @@ class object_detection():
  #[0:parking, 1:lane, 2:right, 3:forward, 4:left, 5:high,6: mid, 7:low, 8:stop] <---
 	def take_action(self, action):
 		msg = [1] * 9
+		if "green" in action:
+			msg[8] = 3
 		if "stop" in action:
 			msg[8] = 4
 			print("stop sign")

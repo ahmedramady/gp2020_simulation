@@ -11,9 +11,7 @@ class LaneController ():
 	self.mainController.parallelparkbutton.clicked.connect(self.startParkingThread)
         #lane controller 
         self.action = 0
-        self.checkParking()
         self.mainController.laneslider.valueChanged.connect(self.switchLane)
-        self.checkWay()
         self.mainController.laneslider.setValue(self.mainController.current_lane - 1)
         self.current_slope = 0
         self.sonar_distance = -1
@@ -27,15 +25,15 @@ class LaneController ():
     def checkLane(self, lane_control):
         if lane_control == 1:
             self.mainController.current_lane = 2
-            self.mainController.laneslider.enabled(False)
+            self.mainController.laneslider.setEnabled(False)
         else:
-            self.mainController.laneslider.enabled(True)
+            self.mainController.laneslider.setEnabled(True)
 
     def checkParking(self, parking):
         if parking == 1:
-            self.mainController.parallelparkbutton.enabled(False)
+            self.mainController.parallelparkbutton.setEnabled(False)
         else:
-            self.mainController.parallelparkbutton.enabled(True)
+            self.mainController.parallelparkbutton.setEnabled(True)
             
 
     def startParkingThread(self):
@@ -105,11 +103,14 @@ class LaneController ():
     #direction right 2 , 1 left 
     #self.currentSpeed = 1
 
-    def takeAction():
+    def takeAction(self):
          # action is 4 digit number [parking, lane, direction, speed]
+	 action = [1]*4
+	 blocked = [1]*2
          action = [int(x) for x in str(self.mainController.current_input)]
          blocked = [int(x) for x in str(self.mainController.current_input_block)]
-
+	 print("action ",action)
+	 print("msg ",self.mainController.current_input)
          ''' parking = action[0] 1: no action, 2: can take action, 3: blocked 
          lane = action[1] 1: no action, 2: can take action, 3: blocked 
          direction = action[2] 2: turn right, 3: forward, 4: left 
@@ -129,6 +130,8 @@ class LaneController ():
              self.speedslider.setValue(180)
          elif action[3] == 7 : #low speed
              self.speedslider.setValue(100)
+	 else:
+	     self.action = 0
 
         #direction
          if action[2] == 2 and blocked[0]!=2: #turn right
