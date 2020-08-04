@@ -38,8 +38,8 @@ class gui(QDialog):
         self.depthWarningSignal.connect(self.setSafetyStatus_Warning)
         self.depthSafeSignal.connect(self.setSafetyStatus_Safe)
 	self.current_action = 0
-	self.current_input = [1]*4
-	self.current_input_block = [1]*2
+	self.current_input = 1111
+	self.current_input_block = 11
 	self.current_status = "safe"
 	self.current_lane = 2
 	self.Autonomous = None

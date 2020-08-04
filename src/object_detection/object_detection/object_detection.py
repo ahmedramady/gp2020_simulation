@@ -6,6 +6,9 @@ from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
 import cv2, rospy, math
 from std_msgs.msg import Float64, Int32	
+import time
+from threading import Thread
+import thread
 class object_detection(): 
 	def __init__(self):
 		rospy.init_node('object_detection', anonymous=True)
@@ -26,7 +29,7 @@ class object_detection():
 		self.depth_sub = rospy.Subscriber('/camera/depth/image_raw', Image, self.depth_callback)
 		#distance_sub = rospy.Subscriber('/scan', LaserScan , distance_callback)
 		self.objects_sub =  rospy.Subscriber('/darknet_ros/bounding_boxes', BoundingBoxes , self.object_callback)
-
+		self.stopSignLock_flag = 0
 	def show_image(self,img):
 		cv2.imshow("Image Window", img)
 		cv2.waitKey(3)
@@ -58,19 +61,40 @@ class object_detection():
 				action =""
 				if math.isnan(distance):
 					distance = self.handle_nan(x,y,w,h)
-				if distance < 4:
-					detected_object = box.Class
-					if (detected_object == "traffic ight red" or detected_object == " traffic light green" or detected_object == "traffic light yellow" or detected_object == "Person" or detected_object == "Car" or detected_object == "Stop sign" or detected_object == "truck" or detected_object == "Train" or detected_object == "motorcycle" or detected_object == "Bicycle" or detected_object == "Bus") and distance < 2:
+				
+				detected_object = box.Class
+				if (detected_object == "traffic light red" or detected_object == " traffic light green" or detected_object == "traffic light yellow" or detected_object == "Person" or detected_object == "Car"  or detected_object == "truck" or detected_object == "Train" or detected_object == "motorcycle" or detected_object == "Bicycle" or detected_object == "Bus") and distance < 2:
 
 						action = self.decide_action(detected_object)
-					else:
-
+						print("in <2 ",action)
+				elif detected_object == "Stop sign" and distance < 3.5 and self.stopSignLock_flag == 0:
 						action = self.decide_action(detected_object)
+						self.startStopSignThread()
+						print("in stop", action)
+											
 						
+				elif (detected_object == "no left turn" or detected_object == "no right turn" or detected_object == "two way traffic" or detected_object == "no entry" or detected_object == "one way traffic" or detected_object == "no U turn" or detected_object == "parking" or detected_object == "walking" or detected_object == "speed limit <30" or detected_object == "speed limit >30" or detected_object == "speed limit >80") and distance < 4:
+
+						action = self.decide_action(detected_object)
+						print("in general ",action)
+				print("out side ",action)		
 				self.take_action(action)
 				self.number_of_objects = self.number_of_objects + 1
 
 		rospy.loginfo('Number of objects detected with confidence: {objects}'.format(objects=self.number_of_objects))
+
+    	def startStopSignThread(self):
+		try:
+		    thread.start_new_thread(self.stopSignLock, ())
+		except:
+		    print "Error: unable to start thread"
+	
+	def stopSignLock(self):
+		self.stopSignLock_flag = 1
+		print("in thread",)
+		time.sleep(5)
+		self.stopSignLock_flag = 0
+
 
 	def decide_action(self, detected_object):
 		action = ""
@@ -122,9 +146,12 @@ class object_detection():
 		if detected_object == "speed limit >30":
 			print("speed limit >30 WAIT FOR ACTION")
 			action += "mid"
-		if detected_object == "Person" or detected_object == "Bicycle" or detected_object == "motorcycle":
-			print("person/bike/motorcycle WAIT FOR ACTION")
-			action += "pbm"
+		if detected_object == "Bicycle" or detected_object == "motorcycle":
+			print("bike/motorcycle WAIT FOR ACTION")
+			action += "bm"
+		if detected_object == "Person":
+			print("person")
+			action+="person" 
 		if detected_object == "Train":
 			print("Train WAIT FOR ACTION")
 			action += "train"
@@ -172,8 +199,10 @@ class object_detection():
 		if "noentry" in action:
 			msg[3] = 2 
 		#actions that relate to tracking
-		if "bpm" in action or "vehicle" in action:
+		if "bm" in action or "vehicle" in action:
 			msg[1] = 2
+		if "person" in action:
+			msg[8] = 2
 		res = int("".join(map(str, msg))) 
 		print res
 		self.action_pub.publish(res)

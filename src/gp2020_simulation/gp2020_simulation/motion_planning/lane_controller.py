@@ -107,10 +107,11 @@ class LaneController ():
          # action is 4 digit number [parking, lane, direction, speed]
 	 action = [1]*4
 	 blocked = [1]*2
+	 print("action ",action)
+	 print("msg ",self.mainController.current_input)	 
          action = [int(x) for x in str(self.mainController.current_input)]
          blocked = [int(x) for x in str(self.mainController.current_input_block)]
-	 print("action ",action)
-	 print("msg ",self.mainController.current_input)
+
          ''' parking = action[0] 1: no action, 2: can take action, 3: blocked 
          lane = action[1] 1: no action, 2: can take action, 3: blocked 
          direction = action[2] 2: turn right, 3: forward, 4: left 
@@ -119,8 +120,6 @@ class LaneController ():
          #speed
          if action[3] == 4: #found stop sign
              self.mainController.stopbutton.click()	
-             time.sleep(1.5)
-             self.mainController.forwardbutton.click()
              time.sleep(1.5)
          elif action[3] == 8: #red traffic light
             self.action = 1
@@ -144,12 +143,14 @@ class LaneController ():
          #lane
          if action[1] == 3: #blocked lane
              self.checkLane(1)
+       	     self.mainController.laneslider.setValue(self.mainController.current_lane - 1)
          else:
             self.checkLane(0)
 
         #parking
          if action[0] == 3: #block parking
              self.checkParking(1)
+
          else:
             self.checkParking(0)
 
