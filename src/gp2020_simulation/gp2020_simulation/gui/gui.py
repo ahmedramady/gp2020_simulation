@@ -173,33 +173,48 @@ class gui(QDialog):
 	self.current_status= "warning"
 
     def checkStatus(self):
- 	res = [int(x) for x in str(self.current_action)]
-        if self.current_status =="danger":
+        if self.current_status == "danger":
             self.current_action = 1
-        elif self.current_status =="stop":
-            self.current_action = 1
-        elif self.current_status =="warning" or self.current_action == 2:
-            self.speedslider.setValue(100)
-		
-# action is 4 digit number [parking, lane,direction, speed]
+        elif self.current_status == "warning":
+            self.speedslider.setValue(100) #slow down
+        else:
+            self.current_action = 0
+      	
+    # action is 4 digit number [0:parking, 1:lane, 2:direction, 3:speed]
 
     def object_action_callback(self,sub_object_action):
-	res = [int(x) for x in str(sub_object_action.data)]
-	action = [1] * 4
-	for i in range(5,9):
+	    #[0:parking, 1:lane, 2:right, 3:forward, 4:left, 5:high,6: mid, 7:low, 8:stop]
+	    res = [int(x) for x in str(sub_object_action.data)]
+	    #what action to take:
+	    action = [1] * 4
+	    for i in range(5,9):
 		if res[i] == 2: 
 			action[3]= i
-	if res[8] == 4
-		action[3] = 8
-	for i in range(2,5):
+		if res[8] == 4:
+		    action[3] = 4
+		for i in range(2,5):
+			if res[i] == 2:
+				action[2] = i
+	    #values = 
+	    '''1 -> no action
+	    ,2 -> take action
+	    ,3 -> block action
+	    ,4 -> stop''' 
+	    action [0] = res[0]
+	    action [1] = res[1]
+
+	    #what action to block:
+	    blocked = [1] * 2
+	    for i in range(5,9):
+			if res[i] == 3: 
+				blocked[1]= i
+	    for i in range(2,5):
 		if res[i] == 2:
-			action[2] = i
-	action [0] = res[0]
-	action [1] = res[1]
-	act = int("".join(map(str, action))) 
-	#print "action:", sub_object_action.data
-	self.current_input = act
-	
+			blocked[2] = i
+
+		#print "action:", sub_object_action.data
+	    self.current_input = int("".join(map(str, action))) 
+	    self.current_input_block = int("".join(map(str, blocked))) 
     
 def main():
     main_app = QApplication(sys.argv)
