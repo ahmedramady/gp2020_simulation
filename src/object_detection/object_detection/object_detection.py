@@ -133,39 +133,47 @@ class object_detection():
 			action += "vehicle"	
 		return action
 
+ #[0:parking, 1:lane, 2:right, 3:forward, 4:left, 5:high,6: mid, 7:low, 8:stop] <---
 	def take_action(self, action):
 		msg = [1] * 9
+		if "green" in action:
+			msg[8] = 3
 		if "stop" in action:
-			msg[0] = 4
+			msg[8] = 4
 			print("stop sign")
 		if "red" in action or "train" in action:
-			 msg[0] = 2
+			 msg[8] = 2
 		if "yellow" in action or "low" in action or "walking" in action:
-			msg[1] = 2 
+			msg[7] = 2
+			#block high and mid speeds
+			msg[5]=3
+			msg[6]=3
 		if "mid" in action:
-			msg[2] = 2
+			msg[6] = 2
+			#block high speed
+			msg[5] = 3
 		if "high" in action:
-			msg[3] = 2 
+			msg[5] = 2 
 		if "2way" in action:
-			msg[7] = 3 #disable left lane
+			msg[1] = 3 #disable left lane
 		if "1way" in action:
-			msg[7] = 1 #act as if one lane
+			msg[1] = 1 #act as if one lane
 		if "park" in action:
-			msg[8] = 2
+			msg[0] = 2
 		if "nopark" in action:
-			msg[8] = 3
+			msg[0] = 3
 		#actions that relate to navigation
 		if "noleft" in action:
 			msg[4] = 3
 		if "noright" in action:
-			msg[6] = 3
+			msg[2] = 3
 		if "noU" in action:
-			msg[5] = 2
+			msg[3] = 2
 		if "noentry" in action:
-			msg[5] = 2 
+			msg[3] = 2 
 		#actions that relate to tracking
 		if "bpm" in action or "vehicle" in action:
-			msg[7] = 2
+			msg[1] = 2
 		res = int("".join(map(str, msg))) 
 		print res
 		self.action_pub.publish(res)

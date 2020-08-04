@@ -10,11 +10,9 @@ class LaneController ():
         self.mainController = gui
 	self.mainController.parallelparkbutton.clicked.connect(self.startParkingThread)
         #lane controller 
-        self.checkParking()
+        self.action = 0
         self.mainController.laneslider.valueChanged.connect(self.switchLane)
-        self.checkWay()
         self.mainController.laneslider.setValue(self.mainController.current_lane - 1)
-        #self.current_lane = 2
         self.current_slope = 0
         self.sonar_distance = -1
         #publishers
@@ -24,13 +22,19 @@ class LaneController ():
         self.lane_slope = rospy.Subscriber('/lane_detection_slope', Float64, self.lane_slope_callback)
 
 
-    def checkWay(self):
-        if self.mainController.current_action == 5 or self.mainController.current_action == 6:
-            self.mainController.laneslider.enabled(False)
+    def checkLane(self, lane_control):
+        if lane_control == 1:
+            self.mainController.current_lane = 2
+            self.mainController.laneslider.setEnabled(False)
+        else:
+            self.mainController.laneslider.setEnabled(True)
 
-    def checkParking(self):
-        if self.mainController.current_action == 8:
-            self.mainController.parallelparkbutton.enabled(False)
+    def checkParking(self, parking):
+        if parking == 1:
+            self.mainController.parallelparkbutton.setEnabled(False)
+        else:
+            self.mainController.parallelparkbutton.setEnabled(True)
+            
 
     def startParkingThread(self):
         try:
@@ -99,37 +103,88 @@ class LaneController ():
     #direction right 2 , 1 left 
     #self.currentSpeed = 1
 
+    def takeAction(self):
+         # action is 4 digit number [parking, lane, direction, speed]
+	 action = [1]*4
+	 blocked = [1]*2
+         action = [int(x) for x in str(self.mainController.current_input)]
+         blocked = [int(x) for x in str(self.mainController.current_input_block)]
+	 print("action ",action)
+	 print("msg ",self.mainController.current_input)
+         ''' parking = action[0] 1: no action, 2: can take action, 3: blocked 
+         lane = action[1] 1: no action, 2: can take action, 3: blocked 
+         direction = action[2] 2: turn right, 3: forward, 4: left 
+         speed = action[3] 5: high, 6: mid, 7: low, 8: stop, 4: stop sign''' 
+
+         #speed
+         if action[3] == 4: #found stop sign
+             self.mainController.stopbutton.click()	
+             time.sleep(1.5)
+             self.mainController.forwardbutton.click()
+             time.sleep(1.5)
+         elif action[3] == 8: #red traffic light
+            self.action = 1
+         elif action[3] == 5 and blocked[1]!=5: #high speed
+             self.speedslider.setValue(230)
+         elif action[3] == 6 and blocked[1]!=6: #mid speed
+             self.speedslider.setValue(180)
+         elif action[3] == 7 : #low speed
+             self.speedslider.setValue(100)
+	 else:
+	     self.action = 0
+
+        #direction
+         if action[2] == 2 and blocked[0]!=2: #turn right
+            self.action = 3
+         elif action[2] == 3 and blocked[0]!=3: #forward
+            self.action = 0
+         elif action[2] == 4 and blocked[0]!=4: #turn left
+            self.action = -3
+
+         #lane
+         if action[1] == 3: #blocked lane
+             self.checkLane(1)
+         else:
+            self.checkLane(0)
+
+        #parking
+         if action[0] == 3: #block parking
+             self.checkParking(1)
+         else:
+            self.checkParking(0)
+
     def lane_callback(self,lane_msg):
-	    self.mainController.checkStatus()
-            self.lane_pub.publish(self.mainController.current_lane)
-	    
-       	    if self.mainController.mode == "auto":
-		    print self.mainController.current_action
-		    if self.mainController.current_action == 1:
-			print("STOP")
-			self.mainController.stopbutton.click()
-		    elif self.mainController.current_action == 0:
-			if((lane_msg.data == 101)):
-			    print("moving forward")
-			   
-			    self.mainController.forwardbutton.click()
-			elif ((lane_msg.data == 110)):
-			    self.mainController.maxSteer = self.calculateAngle(self.current_slope,2,self.mainController.current_lane,self.mainController.currentSpeed)
-			    self.mainController.forwardbutton.click() 
-			    self.mainController.rightbutton.click()
-			    print("turning right")
-		
-			elif ((lane_msg.data==-110)):
-			    self.mainController.maxSteer = self.calculateAngle(self.current_slope,1,self.mainController.current_lane,self.mainController.currentSpeed)
-			    self.mainController.forwardbutton.click()
-			    self.mainController.leftbutton.click()
-			    print("turning left")
-		
-			
-			else:
-			    self.mainController.stopbutton.click()
-				
-	    else:
+
+	self.mainController.checkStatus()
+        self.lane_pub.publish(self.mainController.current_lane)
+        if self.mainController.mode == "auto":
+
+                if self.mainController.current_action == 1:
+                    print("STOP") #emergency stop
+                    self.mainController.stopbutton.click()
+                elif self.mainController.current_action == 0:
+                    #decision making
+                    self.takeAction()
+                    #lane keeping
+                    if self.action == 0:
+                        if((lane_msg.data == 101)):
+                            print("moving forward")
+                            self.mainController.forwardbutton.click()
+                        elif ((lane_msg.data == 110)):
+                            self.mainController.maxSteer = self.calculateAngle(self.current_slope,2,self.mainController.current_lane,self.mainController.currentSpeed)
+                            self.mainController.forwardbutton.click() 
+                            self.mainController.rightbutton.click()
+                            print("turning right")
+                        elif ((lane_msg.data==-110)):
+                            self.mainController.maxSteer = self.calculateAngle(self.current_slope,1,self.mainController.current_lane,self.mainController.currentSpeed)
+                            self.mainController.forwardbutton.click()
+                            self.mainController.leftbutton.click()
+                            print("turning left")
+                        else:
+                            self.mainController.stopbutton.click()
+                    elif self.action == 1:
+                            self.mainController.stopbutton.click()		
+	else:
 			self.mainController.stopbutton.click()
 			self.lane_sub.unregister()
 			self.lane_slope.unregister()
