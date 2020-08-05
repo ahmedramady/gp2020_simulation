@@ -5,7 +5,7 @@ from std_msgs.msg import Header, String
 from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
 import cv2, rospy, math
-from std_msgs.msg import Float64, Int32	
+from std_msgs.msg import Float64, Int32, String
 import time
 from threading import Thread
 import thread
@@ -13,38 +13,83 @@ class object_detection():
 	def __init__(self):
 		rospy.init_node('object_detection', anonymous=True)
 		# Params
-	
 		self.bridge = CvBridge()
-		
 		self.number_of_objects = 0
 		self.image_width = 640
 		self.image_height = 480
 		self.current_depth_array = np.array(np.zeros((self.image_height,self.image_width)), dtype=np.float32)
 		self.current_center =(0,0)
+		self.current_lane=2
+		#Flags
+		self.center = 0
+		self.left = 0
+		self.right = 0
 		# Publishers
 		self.action_pub = rospy.Publisher('object_detection_action', Int32, queue_size=1)
-		self.distance_pub = rospy.Publisher('/object_detection/center_distance', Float64, queue_size=1) #ros-lane-detection	
+		self.distance_pub = rospy.Publisher('/object_detection/center_distance', Float64, queue_size=1) #ros-lane-detection
 		# Subscribers
 		#self.image_sub = rospy.Subscriber('/camera/rgb/image_raw', Image, self.image_callback)
 		self.depth_sub = rospy.Subscriber('/camera/depth/image_raw', Image, self.depth_callback)
 		#distance_sub = rospy.Subscriber('/scan', LaserScan , distance_callback)
+		self.lane =  rospy.Subscriber('/lane_controller/current_lane', Int32 , self.set_current_lane)
 		self.objects_sub =  rospy.Subscriber('/darknet_ros/bounding_boxes', BoundingBoxes , self.object_callback)
 		self.stopSignLock_flag = 0
 	def show_image(self,img):
 		cv2.imshow("Image Window", img)
 		cv2.waitKey(3)
 
-#stop sign 14
-#stop 1
-#right 2
-#left 3
-#no left 4
-#no right 5
-#low speed 6
-#mid speed 7
-#hight speed 8
+	#stop sign 14
+	#stop 1
+	#right 2
+	#left 3
+	#no left 4
+	#no right 5
+	#low speed 6
+	#mid speed 7
+	#hight speed 8
+
+	def set_current_lane(self, lane):
+		self.current_lane = lane.data
+
+	def set_obstacle_position(self, position):
+		if self.current_lane == 2: #right lane
+			if position == "center" or position == "right":
+				self.center = 1
+				self. right = 1
+			else:
+				self.left = 1
+	
+		else:
+			if position == "center" or position == "left":
+				self.center = 1
+				self. left = 1
+			else:
+				self.right = 1
+
+	def switch_lane_action(self):
+
+		if self.current_lane == 2: #right lane
+			if self.center == 1 and self.right == 1 and self.left == 1:
+				return 4 #block lane and slow down
+			elif self.center == 1 and self.right == 1 and self.left ==0:
+				return 2 #switch lanes
+			elif self.center == 0 and self.right == 0 and self.left == 1:
+				return 1
+	
+		else: #left lane
+			if self.center == 1 and self.left == 1 and self.right == 1:
+				return 4 #block lane and slow down
+			elif self.center == 1 and self.left == 1 and self.right ==0:
+				return 2 #switch lanes
+			elif self.center == 0 and self.left == 0 and self.right == 1:
+				return 1
+		
+
 	def object_callback(self,data):
 		self.number_of_objects=0
+		self.center = 0
+		self.left = 0
+		self.right = 0
 		for box in data.bounding_boxes:
 			if box.probability > 0.3:
 				#rospy.loginfo('object name %s',box.Class)
@@ -58,26 +103,28 @@ class object_detection():
 				position = self.check_position((u,v), (self.image_width/2,self.image_height/2))
 				statement = "in" if position == "center" else "on"
 				rospy.loginfo('{Object} is {dist} m away and is {msg} the {pos}'.format(Object=box.Class,dist=round(distance,2), pos=position, msg=statement))
+				detected_object = box.Class
+				
+				if (detected_object == "Car"  or detected_object == "truck" or detected_object == "Train" or detected_object == "motorcycle" or detected_object == "Bicycle" or 				detected_object == "Bus"):
+					self.set_obstacle_position(position)	
+	
 				action =""
+				#check if distance is nan
 				if math.isnan(distance):
 					distance = self.handle_nan(x,y,w,h)
 				
-				detected_object = box.Class
 				if (detected_object == "traffic light red" or detected_object == " traffic light green" or detected_object == "traffic light yellow" or detected_object == "Person" or detected_object == "Car"  or detected_object == "truck" or detected_object == "Train" or detected_object == "motorcycle" or detected_object == "Bicycle" or detected_object == "Bus") and distance < 2:
-
 						action = self.decide_action(detected_object)
-						print("in <2 ",action)
+						
 				elif detected_object == "Stop sign" and distance < 3.5 and self.stopSignLock_flag == 0:
 						action = self.decide_action(detected_object)
 						self.startStopSignThread()
-						print("in stop", action)
-											
-						
+				
+				
 				elif (detected_object == "no left turn" or detected_object == "no right turn" or detected_object == "two way traffic" or detected_object == "no entry" or detected_object == "one way traffic" or detected_object == "no U turn" or detected_object == "parking" or detected_object == "walking" or detected_object == "speed limit <30" or detected_object == "speed limit >30" or detected_object == "speed limit >80") and distance < 4:
 
 						action = self.decide_action(detected_object)
-						print("in general ",action)
-				print("out side ",action)		
+					
 				self.take_action(action)
 				self.number_of_objects = self.number_of_objects + 1
 
@@ -94,7 +141,6 @@ class object_detection():
 		print("in thread",)
 		time.sleep(5)
 		self.stopSignLock_flag = 0
-
 
 	def decide_action(self, detected_object):
 		action = ""
@@ -200,7 +246,13 @@ class object_detection():
 			msg[3] = 2 
 		#actions that relate to tracking
 		if "bm" in action or "vehicle" in action:
+			temp = self.switch_lane_action()			
 			msg[1] = 2
+			if temp not = 4:
+				msg[1] = temp
+			else:
+				msg[1] = 3
+				msg[7] = 2
 		if "person" in action:
 			msg[8] = 2
 		res = int("".join(map(str, msg))) 
@@ -272,20 +324,7 @@ class object_detection():
 		closest_distance = self.get_closest_distance(center_x, center_y)
 		print(closest_distance)
 		self.distance_pub.publish(round(closest_distance,2))
-		'''
-		flattened_array = depth_array.flatten() 
-		nan_array = np.isnan(flattened_array)
-		not_nan_array = ~ nan_array
-		flattened_array = flattened_array[not_nan_array]
-
-		closest = flattened_array[0]
-		
-		for i in range(1,len(flattened_array)):
-			if flattened_array[i] < closest:
-				closest = flattened_array[i]
-
-		#print('closest object is at a depth: {dist} m'.format(dist=closest))
-		'''
+	
 
 	def check_position(self, object_center, image_center = (320,240)):
 		center_range = 100

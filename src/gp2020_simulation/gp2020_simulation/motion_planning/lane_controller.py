@@ -34,6 +34,12 @@ class LaneController ():
             self.mainController.parallelparkbutton.setEnabled(False)
         else:
             self.mainController.parallelparkbutton.setEnabled(True)
+
+    def switchLane (self):
+	if self.mainController.current_lane == 2:
+		self.self.mainController.current_lane = 1
+	else:
+		self.self.mainController.current_lane = 2
             
 
     def startParkingThread(self):
@@ -144,6 +150,8 @@ class LaneController ():
          if action[1] == 3: #blocked lane
              self.checkLane(1)
        	     self.mainController.laneslider.setValue(self.mainController.current_lane - 1)
+	 elif action[1] == 2:
+	     self.switchLane()
          else:
             self.checkLane(0)
 
