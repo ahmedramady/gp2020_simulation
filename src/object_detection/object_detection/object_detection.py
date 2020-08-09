@@ -52,35 +52,44 @@ class object_detection():
 		self.current_lane = lane.data
 
 	def set_obstacle_position(self, position):
+		#print("in set position")
 		if self.current_lane == 2: #right lane
+			#print("car in right lane")
 			if position == "center" or position == "right":
+				#print("same lane")
 				self.center = 1
 				self. right = 1
 			else:
 				self.left = 1
+				#print("diff lane")
 	
 		else:
+			#print("car in left lane")
 			if position == "center" or position == "left":
 				self.center = 1
 				self. left = 1
+				#print("same lane")
 			else:
 				self.right = 1
+				#print("diff lane")
 
 	def switch_lane_action(self):
-
+		#print("in lane action")
 		if self.current_lane == 2: #right lane
+			#print("right laane")
 			if self.center == 1 and self.right == 1 and self.left == 1:
-				return 4 #block lane and slow down
+				return 5 #block lane and slow down
 			elif self.center == 1 and self.right == 1 and self.left ==0:
-				return 2 #switch lanes
+				return 4 #switch lanes to left lane 
 			elif self.center == 0 and self.right == 0 and self.left == 1:
-				return 1
+				return 1 # no action
 	
 		else: #left lane
+			#print("left lane")
 			if self.center == 1 and self.left == 1 and self.right == 1:
-				return 4 #block lane and slow down
+				return 5 #block lane and slow down
 			elif self.center == 1 and self.left == 1 and self.right ==0:
-				return 2 #switch lanes
+				return 2 #switch lanes to right lane
 			elif self.center == 0 and self.left == 0 and self.right == 1:
 				return 1
 		
@@ -106,6 +115,7 @@ class object_detection():
 				detected_object = box.Class
 				
 				if (detected_object == "Car"  or detected_object == "truck" or detected_object == "Train" or detected_object == "motorcycle" or detected_object == "Bicycle" or 				detected_object == "Bus"):
+					#print("in condition")
 					self.set_obstacle_position(position)	
 	
 				action =""
@@ -113,7 +123,7 @@ class object_detection():
 				if math.isnan(distance):
 					distance = self.handle_nan(x,y,w,h)
 				
-				if (detected_object == "traffic light red" or detected_object == " traffic light green" or detected_object == "traffic light yellow" or detected_object == "Person" or detected_object == "Car"  or detected_object == "truck" or detected_object == "Train" or detected_object == "motorcycle" or detected_object == "Bicycle" or detected_object == "Bus") and distance < 2:
+				if (detected_object == "traffic light red" or detected_object == " traffic light green" or detected_object == "traffic light yellow" or detected_object == "Person") and distance < 2:
 						action = self.decide_action(detected_object)
 						
 				elif detected_object == "Stop sign" and distance < 3.5 and self.stopSignLock_flag == 0:
@@ -121,7 +131,7 @@ class object_detection():
 						self.startStopSignThread()
 				
 				
-				elif (detected_object == "no left turn" or detected_object == "no right turn" or detected_object == "two way traffic" or detected_object == "no entry" or detected_object == "one way traffic" or detected_object == "no U turn" or detected_object == "parking" or detected_object == "walking" or detected_object == "speed limit <30" or detected_object == "speed limit >30" or detected_object == "speed limit >80") and distance < 4:
+				elif (detected_object == "no left turn" or detected_object == "no right turn" or detected_object == "two way traffic" or detected_object == "no entry" or detected_object == "one way traffic" or detected_object == "no U turn" or detected_object == "parking" or detected_object == "walking" or detected_object == "speed limit <30" or detected_object == "speed limit >30" or detected_object == "speed limit >80" or detected_object == "Car"  or detected_object == "truck" or detected_object == "Train" or detected_object == "motorcycle" or detected_object == "Bicycle" or detected_object == "Bus") and distance < 6:
 
 						action = self.decide_action(detected_object)
 					
@@ -211,11 +221,6 @@ class object_detection():
 		msg = [1] * 9
 		if "green" in action:
 			msg[8] = 3
-		if "stop" in action:
-			msg[8] = 4
-			print("stop sign")
-		if "red" in action or "train" in action:
-			 msg[8] = 2
 		if "yellow" in action or "low" in action or "walking" in action:
 			msg[7] = 2
 			#block high and mid speeds
@@ -248,13 +253,18 @@ class object_detection():
 		if "bm" in action or "vehicle" in action:
 			temp = self.switch_lane_action()			
 			msg[1] = 2
-			if temp not = 4:
+			if temp != 5:
 				msg[1] = temp
 			else:
 				msg[1] = 3
 				msg[7] = 2
 		if "person" in action:
 			msg[8] = 2
+		if "stop" in action:
+			msg[8] = 4
+			print("stop sign")
+		if "red" in action or "train" in action:
+			 msg[8] = 2
 		res = int("".join(map(str, msg))) 
 		print res
 		self.action_pub.publish(res)

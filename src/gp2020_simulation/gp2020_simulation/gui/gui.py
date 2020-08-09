@@ -216,7 +216,7 @@ class gui(QDialog):
 		#print "action:", sub_object_action.data
 	    self.current_input = int("".join(map(str, action))) 
 	    self.current_input_block = int("".join(map(str, blocked))) 
-	    print(self.current_input)
+	    #print(self.current_input)
     
 def main():
     main_app = QApplication(sys.argv)
