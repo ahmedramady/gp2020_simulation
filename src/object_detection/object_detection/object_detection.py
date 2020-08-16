@@ -248,7 +248,7 @@ class object_detection():
 		if "bm" in action or "vehicle" in action:
 			temp = self.switch_lane_action()			
 			msg[1] = 2
-			if temp not = 4:
+			if temp  != 4:
 				msg[1] = temp
 			else:
 				msg[1] = 3

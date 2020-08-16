@@ -91,7 +91,7 @@ class lane_detection():
 
 	def image_callback(self, img_msg):
 		try:
-			cv_image = self.bridge.imgmsg_to_cv2(img_msg, "passthrough")
+			cv_image = self.bridge.imgmsg_to_cv2(img_msg, "rgb8")
 		except CvBridgeError, e:
 			rospy.logerr("CvBridge Error: {0}".format(e))
 		image = cv_image
@@ -109,13 +109,15 @@ class lane_detection():
 		dim_white_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([0,0,83], dtype=np.uint8), np.array([0,255,154], dtype=np.uint8))
 		red_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([166,228,0], dtype=np.uint8), np.array([179,255,255], dtype=np.uint8))
 		yellow_mask = utils.isolate_color_mask(utils.to_hsv(image), np.array([ 29,210,0], dtype=np.uint8), np.array([ 179, 255, 255], dtype=np.uint8))
+		real_yellow_mask =  utils.isolate_color_mask(utils.to_hsv(image), np.array([ 17 ,114,112], dtype=np.uint8), np.array([ 87, 255, 255], dtype=np.uint8))
+		real_white_mask =  utils.isolate_color_mask(utils.to_hsv(image), np.array([ 0,0,177], dtype=np.uint8), np.array([ 63, 89, 217], dtype=np.uint8))
 
 		#join the masked images
 		red_mask = cv2.bitwise_or(red_shadow_mask, red_mask)
 		white_mask  = cv2.bitwise_or(white_shadow_mask, white_mask)
 
-		edge_mask = yellow_mask
-		middle_mask = dim_white_mask
+		edge_mask = red_mask
+		middle_mask = white_mask
 
 		#blur to remove noise
 		edge_mask = utils.blur(edge_mask,7)

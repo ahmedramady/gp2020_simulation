@@ -4,6 +4,7 @@ from std_msgs.msg import Bool
 from std_msgs.msg import Float32
 from std_msgs.msg import Float64
 from ackermann_msgs.msg import AckermannDriveStamped
+from geometry_msgs.msg import Twist
 
 flag_move = 0
 
@@ -19,8 +20,18 @@ def set_throttle_steer(data):
     pub_pos_left_steering_hinge = rospy.Publisher('/car/left_steering_hinge_position_controller/command', Float64, queue_size=1)
     pub_pos_right_steering_hinge = rospy.Publisher('/car/right_steering_hinge_position_controller/command', Float64, queue_size=1)
 
-    throttle = data.drive.speed/0.1
-    steer = data.drive.steering_angle
+    throttle = data.linear.x
+    steer = data.angular.z
+
+    if(data.angular.z > 0.0 or data.angular.z < 0.0):
+        data.linear.x = 5
+    if(data.linear.y> 0.0):
+	data.angular.z = 0.7
+	data.linear.x = 5
+    if(data.linear.y < 0.0):
+	data.angular.z = 0.7
+	data.linear.x = 5
+    
 
     pub_vel_left_rear_wheel.publish(throttle)
     pub_vel_right_rear_wheel.publish(throttle)
@@ -33,7 +44,7 @@ def servo_commands():
 
     rospy.init_node('servo_commands', anonymous=True)
 
-    rospy.Subscriber("/car/ackermann_cmd_mux/output", AckermannDriveStamped, set_throttle_steer)
+    rospy.Subscriber("cmd_vel", Twist, set_throttle_steer)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()

@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <launch>
+<arg name="map" default="$(find gp2020_simulation)/maps/map1.yaml"/>
   <arg name="model" default="$(find car_description)/urdf/car.urdf"/>
   <param name="robot_description" command="cat $(arg model)"/>
-  <arg name="rvizconfig" default="$(find gp2020_simulation)/rviz/gp2020_simulation.rviz" />
+  <arg name="rvizconfig" default="$(find gp2020_simulation)/rviz/car.rviz" />
   <!--arg name="rvizconfig" default="$(find car_demo)/rviz/demo.rviz" /-->
 <!--
   <param name="robot_description" command="$(arg model)"/>
@@ -36,7 +37,8 @@
   </node>
 
 
-  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -y -14.45 -z 0 -model car"/>
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -y -14.2 -z 0 -model car"/>
+  <node name="load" pkg="map_server" type="map_server" args="$(arg map)"/>
 
 <!--
   <node pkg="nodelet" type="nodelet" name="laserscan_nodelet_manager" args="manager"/>
@@ -50,13 +52,41 @@
     <remap from="scan" to="scan"/>
   </node>
 -->
-
+  <node name="amcl" pkg="amcl" type="amcl">
+      <param name="use_map_topic " value="true"/>
+      <param name="odom_frame_id" value="odom"/>
+      <param name="odom_model_type" value="diff"/>
+      <param name="base_frame_id" value="base_link"/>
+      <param name="transform_tolerance" value="0.2"/>
+      <param name="gui_publish_rate" value="10.0"/>
+      <param name="use_map_topic" value="true"/>
+  </node>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
-  <node name="laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" args="image:=/camera/depth/image_raw" />
+  <!--node name="laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" args="image:=/camera/depth/image_raw" /-->
   <node pkg="gp2020_simulation" type="gui.py" name="gui" output="screen"/>
+  <node pkg="gp2020_simulation" type="odometry.py" name="odometry" output="screen"/>
+  <!--node pkg="gp2020_simulation" type="controller.py" name="controller" output="screen"/-->
   <node pkg="gp2020_simulation" type="safe_braking.py" name="safe_breaking" output="screen"/>
 
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base">
+    <rosparam file="$(find gp2020_simulation)/map_params/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+    <rosparam file="$(find gp2020_simulation)/map_params/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find gp2020_simulation)/map_params/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find gp2020_simulation)/map_params/global_costmap_params.yaml" command="load" /> 
+    <rosparam file="$(find gp2020_simulation)/map_params/base_local_planner_params.yaml" command="load" />
+ </node>
 
+<!-- Move Base Flex 
+  <node pkg="mbf_costmap_nav" type="mbf_costmap_nav" respawn="false" name="move_base_flex" output="screen">
+    <param name="tf_timeout" value="1.5"/>
+    <param name="planner_max_retries" value="3"/>
+    <rosparam file="$(find gp2020_simulation)/map_params/planners.yaml" command="load" />
+    <rosparam file="$(find gp2020_simulation)/map_params/recovery_behaviors.yaml" command="load" />
+    <rosparam file="$(find gp2020_simulation)/map_params/costmap_common_params.yaml" command="load" ns="global_costmap"/>
+    <rosparam file="$(find gp2020_simulation)/map_params/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find gp2020_simulation)/map_params/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find gp2020_simulation)/map_params/local_costmap_params.yaml" command="load" />
+  </node>-->
 
   <!--include file="$(find hector_mapping)/launch/mapping_default.launch"/-->
 
